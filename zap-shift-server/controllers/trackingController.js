@@ -9,29 +9,17 @@ class TrackingController {
     async getTrackingLogs(req, res) {
         try {
             const trackingId = req.params.trackingId;
-            
-            // Check if user has access to this tracking (via parcel ownership or assignment)
-            const parcel = await this.Parcel.findByTrackingId(trackingId);
-            if (!parcel) {
-                return res.status(404).send({ message: 'tracking not found' });
+            if (!trackingId) {
+                return res.status(400).json({ message: 'Tracking ID is required' });
             }
-            
-            const currentUser = await this.User.findByEmail(req.decoded_email);
-            const isOwner = parcel.senderEmail === req.decoded_email;
-            const isAssignedRider = parcel.riderEmail === req.decoded_email;
-            const isAdmin = currentUser && currentUser.role === 'admin';
-            
-            if (!isOwner && !isAssignedRider && !isAdmin) {
-                return res.status(403).send({ message: 'forbidden access' });
-            }
-            
+
             const result = await this.Tracking.findAllByTrackingId(trackingId);
-            res.send(result);
+            // Public timeline lookup by tracking ID; empty list when nothing exists yet
+            return res.status(200).json(Array.isArray(result) ? result : []);
         } catch (error) {
-            res.status(500).send({ message: 'Error fetching tracking logs', error: error.message });
+            res.status(500).json({ message: 'Error fetching tracking logs', error: error.message });
         }
     }
 }
 
 module.exports = TrackingController;
-

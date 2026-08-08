@@ -33,6 +33,7 @@ import Blog from "../pages/Blog/Blog";
 import BlogDetails from "../pages/Blog/BlogDetails";
 import Help from "../pages/Help/Help";
 import AdminAnalytics from "../pages/Dashboard/Analytics/AdminAnalytics";
+import NotFound from "../pages/NotFound/NotFound";
 
 const centersLoader = () => fetch('/serviceCenters.json').then((res) => res.json());
 
@@ -61,7 +62,8 @@ export const router = createBrowserRouter([
       },
       { path: 'coverage', Component: Coverage, loader: centersLoader },
       { path: 'coverage/:slug', Component: CoverageDetails, loader: centersLoader },
-      { path: 'parcel-track/:trackingId', Component: ParcelTrack }
+      { path: 'parcel-track/:trackingId', Component: ParcelTrack },
+      { path: '*', Component: NotFound }
     ]
   },
   {
@@ -106,7 +108,12 @@ export const router = createBrowserRouter([
       {
         path: 'users-management',
         element: <AdminRoute><UsersManagement /></AdminRoute>
-      }
+      },
+      { path: '*', Component: NotFound }
     ]
+  },
+  {
+    path: '*',
+    Component: NotFound
   }
 ]);
