@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+**/zap-shift-firebase-adminsdk*.json
+**/*firebase-adminsdk*.json
+**/serviceAccount*.json
+
+# Build outputs
+dist/
+dist-ssr/
+build/
+.vercel/
+.firebase/
+
+# Logs & cache
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.cache/
+
+# Editor / OS
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Local
+*.local

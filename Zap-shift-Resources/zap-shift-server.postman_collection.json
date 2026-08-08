@@ -1,0 +1,737 @@
+{
+  "info": {
+    "name": "Zap Shift Server API",
+    "description": "API collection for the Zap Shift Server (parcel delivery backend). Built from the actual routes/controllers in the project.\n\nSTEP-BY-STEP SETUP:\n1. Import this file into Postman (File > Import).\n2. Open the collection > Variables tab, set `base_url` to your server URL (default: http://localhost:3000).\n3. Get a Firebase ID token from your frontend app (after logging in) and paste it into the `fb_token` variable. This project has NO backend login route \u2014 authentication happens on the frontend via Firebase, and the ID token is sent as a Bearer token to this backend.\n4. Run '0. Health Check' first to confirm the server is running.\n5. Run 'Create User' (in Users folder) to register yourself in the database (role defaults to 'user').\n6. To test admin-only routes, manually change your user's `role` to 'admin' in MongoDB, then re-fetch a fresh Firebase token if needed.\n7. To test rider-only routes, use the Riders folder to create a rider, have an admin approve it (sets role to 'rider'), then use that rider's token.\n8. Payment routes are currently commented out in index.js on the server -- uncomment them before testing that folder.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "fb_token",
+      "value": "PASTE_FIREBASE_ID_TOKEN_HERE",
+      "type": "string"
+    },
+    {
+      "key": "user_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "parcel_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "rider_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "tracking_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "user_email",
+      "value": "test@example.com",
+      "type": "string"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{fb_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "0. Health Check",
+      "item": [
+        {
+          "name": "1. Root - Server Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                ""
+              ]
+            },
+            "description": "No auth required. Confirms the server is up and running."
+          }
+        }
+      ]
+    },
+    {
+      "name": "1. Auth (Firebase - Frontend Only)",
+      "description": "This backend has NO /login or /register route. Authentication is handled entirely by Firebase on the client/frontend. After a user signs in with Firebase on the frontend, you get an ID token there and use it as the Bearer token for every protected request below. This folder is just a placeholder note - there is no request to run here.",
+      "item": []
+    },
+    {
+      "name": "2. Users",
+      "item": [
+        {
+          "name": "1. Create User (Register in DB)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"displayName\": \"John Doe\",\n  \"email\": \"{{user_email}}\",\n  \"photoURL\": \"https://example.com/avatar.jpg\",\n  \"role\": \"user\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users"
+              ]
+            },
+            "description": "No auth required. Called right after Firebase signup/login on the frontend. If user already exists, returns { message: 'user exists' }."
+          }
+        },
+        {
+          "name": "2. Get All Users (search)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users?searchText=",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "searchText",
+                  "value": "",
+                  "description": "optional - search by name or email"
+                }
+              ]
+            },
+            "description": "Requires Bearer token (any logged-in user)."
+          }
+        },
+        {
+          "name": "3. Get User By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/{{user_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "{{user_id}}"
+              ]
+            },
+            "description": "Requires Bearer token. Users can only view their own profile; admins can view anyone."
+          }
+        },
+        {
+          "name": "4. Get User Role By Email",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/{{user_email}}/role",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "{{user_email}}",
+                "role"
+              ]
+            },
+            "description": "Requires Bearer token. Users can only check their own role; admins can check anyone's."
+          }
+        },
+        {
+          "name": "5. Update User Role (Admin Only)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"admin\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/{{user_id}}/role",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "{{user_id}}",
+                "role"
+              ]
+            },
+            "description": "Requires Bearer token from a user whose role is 'admin'. Allowed roles seen in this app: user, admin, rider."
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Riders",
+      "item": [
+        {
+          "name": "1. Apply as Rider (Create Rider)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane Rider\",\n  \"email\": \"rider@example.com\",\n  \"age\": 28,\n  \"district\": \"Dhaka\",\n  \"phone\": \"01700000000\",\n  \"nid\": \"1234567890\",\n  \"bikeBrand\": \"Yamaha\",\n  \"bikeRegNumber\": \"DHK-1234\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/riders",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "riders"
+              ]
+            },
+            "description": "No auth required. Rider status defaults to 'pending'. Fields are free-form (whatever your frontend sends), sample shown is typical."
+          }
+        },
+        {
+          "name": "2. Get All Riders (filter)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/riders?status=pending&district=&workStatus=",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "riders"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "pending",
+                  "description": "optional: pending / approved / rejected"
+                },
+                {
+                  "key": "district",
+                  "value": "",
+                  "description": "optional"
+                },
+                {
+                  "key": "workStatus",
+                  "value": "",
+                  "description": "optional: available / in_delivery"
+                }
+              ]
+            },
+            "description": "Requires Bearer token."
+          }
+        },
+        {
+          "name": "3. Get Delivery Count Per Day (Rider Only)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/riders/delivery-per-day",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "riders",
+                "delivery-per-day"
+              ]
+            },
+            "description": "Requires Bearer token from a user whose role is 'rider'. Returns delivered-parcel counts grouped by day for the logged-in rider."
+          }
+        },
+        {
+          "name": "4. Update Rider Status (Admin Only)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"approved\",\n  \"email\": \"rider@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/riders/{{rider_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "riders",
+                "{{rider_id}}"
+              ]
+            },
+            "description": "Requires Bearer token from an 'admin'. status: 'approved' or 'rejected'. If approved, the given email's user role is auto-updated to 'rider'. Include email only when approving."
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Parcels",
+      "item": [
+        {
+          "name": "1. Create Parcel (Book a Delivery)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"parcelName\": \"Sample Package\",\n  \"parcelType\": \"document\",\n  \"cost\": 100,\n  \"senderName\": \"John Doe\",\n  \"senderRegion\": \"Dhaka\",\n  \"senderContact\": \"01700000000\",\n  \"senderAddress\": \"House 1, Road 1\",\n  \"receiverName\": \"Jane Smith\",\n  \"receiverRegion\": \"Chattogram\",\n  \"receiverContact\": \"01800000000\",\n  \"receiverAddress\": \"House 2, Road 2\",\n  \"deliveryStatus\": \"pending\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/parcels",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "parcels"
+              ]
+            },
+            "description": "Requires Bearer token. senderEmail, trackingId, and createdAt are auto-set by the server. Field names shown are typical for this kind of app - body is free-form, adjust to match your frontend form."
+          }
+        },
+        {
+          "name": "2. Get All Parcels (mine, or filter as admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/parcels?email=&deliveryStatus=",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "parcels"
+              ],
+              "query": [
+                {
+                  "key": "email",
+                  "value": "",
+                  "description": "admin only - filter by sender email"
+                },
+                {
+                  "key": "deliveryStatus",
+                  "value": "",
+                  "description": "optional"
+                }
+              ]
+            },
+            "description": "Requires Bearer token. Regular users only see their own parcels; admins see all (or filter by email)."
+          }
+        },
+        {
+          "name": "3. Get Parcels Assigned To Me (Rider Only)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/parcels/rider?deliveryStatus=",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "parcels",
+                "rider"
+              ],
+              "query": [
+                {
+                  "key": "deliveryStatus",
+                  "value": "",
+                  "description": "optional filter"
+                }
+              ]
+            },
+            "description": "Requires Bearer token from a 'rider'. Excludes delivered parcels by default."
+          }
+        },
+        {
+          "name": "4. Get Delivery Status Stats (Admin Only)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/parcels/delivery-status/stats",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "parcels",
+                "delivery-status",
+                "stats"
+              ]
+            },
+            "description": "Requires Bearer token from an 'admin'. Returns counts grouped by deliveryStatus."
+          }
+        },
+        {
+          "name": "5. Get Parcel By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/parcels/{{parcel_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "parcels",
+                "{{parcel_id}}"
+              ]
+            },
+            "description": "Requires Bearer token. Only the sender, assigned rider, or an admin can view it."
+          }
+        },
+        {
+          "name": "6. Update Parcel Delivery Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"deliveryStatus\": \"parcel_delivered\",\n  \"riderId\": \"{{rider_id}}\",\n  \"trackingId\": \"{{tracking_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/parcels/{{parcel_id}}/status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "parcels",
+                "{{parcel_id}}",
+                "status"
+              ]
+            },
+            "description": "Requires Bearer token from the assigned rider or an admin. If deliveryStatus is 'parcel_delivered', the rider's workStatus is set back to 'available'."
+          }
+        },
+        {
+          "name": "7. Assign Rider To Parcel (Admin Only)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"riderId\": \"{{rider_id}}\",\n  \"riderName\": \"Jane Rider\",\n  \"riderEmail\": \"rider@example.com\",\n  \"trackingId\": \"{{tracking_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/parcels/{{parcel_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "parcels",
+                "{{parcel_id}}"
+              ]
+            },
+            "description": "Requires Bearer token from an 'admin'. Sets deliveryStatus to 'driver_assigned' and marks the rider as 'in_delivery'."
+          }
+        },
+        {
+          "name": "8. Delete Parcel (Admin Only)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/parcels/{{parcel_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "parcels",
+                "{{parcel_id}}"
+              ]
+            },
+            "description": "Requires Bearer token from an 'admin'."
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Payments",
+      "description": "NOTE: These routes are currently commented out in index.js on the server. Uncomment 'paymentRoutes(app, controllers);' (and its require line) before testing this folder.",
+      "item": [
+        {
+          "name": "1. Create Checkout Session (Stripe)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cost\": 100,\n  \"parcelName\": \"Sample Package\",\n  \"parcelId\": \"{{parcel_id}}\",\n  \"trackingId\": \"{{tracking_id}}\",\n  \"senderEmail\": \"{{user_email}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/payment-checkout-session",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "payment-checkout-session"
+              ]
+            },
+            "description": "No auth required. Creates a Stripe Checkout session and returns { url } - open that URL in a browser to complete a test payment."
+          }
+        },
+        {
+          "name": "2. Handle Payment Success (Stripe Redirect)",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/payment-success?session_id=",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "payment-success"
+              ],
+              "query": [
+                {
+                  "key": "session_id",
+                  "value": "",
+                  "description": "Stripe checkout session ID, from the success redirect URL"
+                }
+              ]
+            },
+            "description": "No auth required. Normally called automatically by the frontend after Stripe redirects back with a session_id. Marks the parcel as paid and logs the payment."
+          }
+        },
+        {
+          "name": "3. Get All Payments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/payments?email=",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "payments"
+              ],
+              "query": [
+                {
+                  "key": "email",
+                  "value": "",
+                  "description": "optional - must match your own email unless admin logic is added"
+                }
+              ]
+            },
+            "description": "Requires Bearer token."
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Tracking",
+      "item": [
+        {
+          "name": "1. Get Tracking Logs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/trackings/{{tracking_id}}/logs",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "trackings",
+                "{{tracking_id}}",
+                "logs"
+              ]
+            },
+            "description": "Requires Bearer token. Only the parcel's sender, assigned rider, or an admin can view logs. tracking_id looks like PRCL-20250101-ABC123."
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. \ud83d\udd12 Admin Only Endpoints",
+      "description": "All routes here require a Bearer token belonging to a user whose role is 'admin' (checked via the verifyAdmin middleware). These are duplicated here from their original folders (Users/Riders/Parcels) purely for quick admin-testing convenience \u2014 running them here has the exact same effect as running them in their original folder.",
+      "item": [
+        {
+          "name": "1. Update User Role",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"admin\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/{{user_id}}/role",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "{{user_id}}",
+                "role"
+              ]
+            },
+            "description": "Requires Bearer token from a user whose role is 'admin'. Allowed roles seen in this app: user, admin, rider."
+          }
+        },
+        {
+          "name": "2. Approve/Reject Rider",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"approved\",\n  \"email\": \"rider@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/riders/{{rider_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "riders",
+                "{{rider_id}}"
+              ]
+            },
+            "description": "Requires Bearer token from an 'admin'. status: 'approved' or 'rejected'. If approved, the given email's user role is auto-updated to 'rider'. Include email only when approving."
+          }
+        },
+        {
+          "name": "3. Get Delivery Status Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/parcels/delivery-status/stats",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "parcels",
+                "delivery-status",
+                "stats"
+              ]
+            },
+            "description": "Requires Bearer token from an 'admin'. Returns counts grouped by deliveryStatus."
+          }
+        },
+        {
+          "name": "4. Assign Rider To Parcel",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"riderId\": \"{{rider_id}}\",\n  \"riderName\": \"Jane Rider\",\n  \"riderEmail\": \"rider@example.com\",\n  \"trackingId\": \"{{tracking_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/parcels/{{parcel_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "parcels",
+                "{{parcel_id}}"
+              ]
+            },
+            "description": "Requires Bearer token from an 'admin'. Sets deliveryStatus to 'driver_assigned' and marks the rider as 'in_delivery'."
+          }
+        },
+        {
+          "name": "5. Delete Parcel",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/parcels/{{parcel_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "parcels",
+                "{{parcel_id}}"
+              ]
+            },
+            "description": "Requires Bearer token from an 'admin'."
+          }
+        }
+      ]
+    }
+  ]
+}
