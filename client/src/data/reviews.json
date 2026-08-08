@@ -1,0 +1,74 @@
+[
+  {
+    "id": "zs-rev-01",
+    "user_email": "nabila.ahmed@gmail.com",
+    "userName": "Nabila Ahmed",
+    "delivery_email": "rider.dhaka01@zapshift.com",
+    "ratings": 4.9,
+    "review": "Booked a same-city parcel from Dhanmondi to Uttara. Pickup was on time and tracking updates were clear.",
+    "parcel_id": "ZS-DHK-10021",
+    "pick_up_email": "nabila.ahmed@gmail.com",
+    "user_photoURL": "https://randomuser.me/api/portraits/women/44.jpg",
+    "date": "2026-06-18T14:30:00.000Z"
+  },
+  {
+    "id": "zs-rev-02",
+    "user_email": "rafiq.trade@outlook.com",
+    "userName": "Rafiq Hasan",
+    "delivery_email": "rider.ctg02@zapshift.com",
+    "ratings": 4.7,
+    "review": "Inter-district shipment to Chattogram arrived with full status history. Great for our wholesale samples.",
+    "parcel_id": "ZS-CTG-10088",
+    "pick_up_email": "rafiq.trade@outlook.com",
+    "user_photoURL": "https://randomuser.me/api/portraits/men/32.jpg",
+    "date": "2026-06-22T10:15:00.000Z"
+  },
+  {
+    "id": "zs-rev-03",
+    "user_email": "sara.office@bdmail.com",
+    "userName": "Sara Chowdhury",
+    "delivery_email": "rider.gazipur03@zapshift.com",
+    "ratings": 4.8,
+    "review": "Office pickup desk saved us time. Riders confirmed handoff and delivery without phone chasing.",
+    "parcel_id": "ZS-GZ-10112",
+    "pick_up_email": "sara.office@bdmail.com",
+    "user_photoURL": "https://randomuser.me/api/portraits/women/65.jpg",
+    "date": "2026-07-01T09:40:00.000Z"
+  },
+  {
+    "id": "zs-rev-04",
+    "user_email": "imran.shop@gmail.com",
+    "userName": "Imran Kabir",
+    "delivery_email": "rider.dhaka07@zapshift.com",
+    "ratings": 4.6,
+    "review": "Document express was perfect for contracts. Pricing matched the calculator and payment was smooth.",
+    "parcel_id": "ZS-DOC-10145",
+    "pick_up_email": "imran.shop@gmail.com",
+    "user_photoURL": "https://randomuser.me/api/portraits/men/12.jpg",
+    "date": "2026-07-08T16:05:00.000Z"
+  },
+  {
+    "id": "zs-rev-05",
+    "user_email": "farzana.home@yahoo.com",
+    "userName": "Farzana Islam",
+    "delivery_email": "rider.sylhet01@zapshift.com",
+    "ratings": 5,
+    "review": "Sent a parcel to Sylhet for my parents. Live tracking and polite delivery made the process stress-free.",
+    "parcel_id": "ZS-SYL-10190",
+    "pick_up_email": "farzana.home@yahoo.com",
+    "user_photoURL": "https://randomuser.me/api/portraits/women/21.jpg",
+    "date": "2026-07-14T11:20:00.000Z"
+  },
+  {
+    "id": "zs-rev-06",
+    "user_email": "ops@brightcart.bd",
+    "userName": "BrightCart Ops",
+    "delivery_email": "rider.dhaka11@zapshift.com",
+    "ratings": 4.8,
+    "review": "We moved to ZapShift for e-commerce drops. Dashboard visibility for unpaid vs delivered parcels is excellent.",
+    "parcel_id": "ZS-BIZ-10220",
+    "pick_up_email": "ops@brightcart.bd",
+    "user_photoURL": "https://randomuser.me/api/portraits/men/76.jpg",
+    "date": "2026-07-20T13:10:00.000Z"
+  }
+]

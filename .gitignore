@@ -1,6 +1,11 @@
 # Dependencies
 node_modules/
 
+# Legacy folders (migrated to client/ server/ resources/)
+zap-shift-client/
+zap-shift-server/
+Zap-shift-Resources/
+
 # Environment & secrets
 .env
 .env.*

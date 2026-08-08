@@ -207,7 +207,7 @@ Rider commission (display logic):
 
 ## 8. Tech Stack
 
-### Frontend (`zap-shift-client`)
+### Frontend (`client/`)
 
 | Area | Technology |
 |------|------------|
@@ -225,7 +225,7 @@ Rider commission (display logic):
 | Alerts | SweetAlert2 |
 | Icons | React Icons |
 
-### Backend (`zap-shift-server`)
+### Backend (`server/`)
 
 | Area | Technology |
 |------|------------|
@@ -246,21 +246,22 @@ Rider commission (display logic):
 
 ---
 
-## 9. Folder Structure
+## 9. Folder Structure (MVP)
 
 ```text
 zap-shift/
+├── package.json                  # Root scripts (install/dev helpers)
 ├── README.md
 ├── .gitignore
-├── Zap-shift-Resources/          # Specs, assets, Postman, Figma refs
-├── zap-shift-client/             # Frontend (React + Vite)
-└── zap-shift-server/             # Backend (Express + MongoDB)
+├── client/                       # Frontend MVP (React + Vite)
+├── server/                       # Backend MVP (Express + MongoDB)
+└── resources/                    # Specs, assets, Postman, Figma refs
 ```
 
 ### Frontend structure
 
 ```text
-zap-shift-client/
+client/
 ├── public/
 │   ├── reviews.json
 │   └── serviceCenters.json
@@ -334,7 +335,7 @@ zap-shift-client/
 ### Backend structure
 
 ```text
-zap-shift-server/
+server/
 ├── config/
 │   ├── database.js               # MongoDB connection
 │   └── firebase.js               # Firebase Admin init
@@ -395,43 +396,56 @@ git clone https://github.com/kaziashik/zap-shift.git
 cd zap-shift
 ```
 
-### Step 2 — Setup backend
+### Step 2 — Install dependencies
+
+From the project root:
 
 ```bash
-cd zap-shift-server
+npm run install:all
+```
+
+Or manually:
+
+```bash
+cd server
+npm install
+cd ../client
 npm install
 ```
 
-Create `zap-shift-server/.env` (see [Environment Variables](#11-environment-variables)).
+### Step 3 — Environment files
 
-Start API:
+Create `server/.env` and `client/.env` (see [Environment Variables](#11-environment-variables)).
+
+### Step 4 — Start the apps
+
+Terminal 1 (API):
 
 ```bash
+cd server
 npm run dev
 ```
 
-Default local API URL used by this project: `http://localhost:5001`
-
-> Tip: If port `5000` is already used by another app on your machine, keep ZapShift on `5001`.
-
-### Step 3 — Setup frontend
+Terminal 2 (Frontend):
 
 ```bash
-cd ../zap-shift-client
-npm install
-```
-
-Create `zap-shift-client/.env` (see below).
-
-Start client:
-
-```bash
+cd client
 npm run dev
 ```
 
-Open: `http://localhost:5173`
+Or from root:
 
-### Step 4 — Verify
+```bash
+npm run dev:server
+npm run dev:client
+```
+
+- Frontend: `http://localhost:5173`
+- API: `http://localhost:5001`
+
+> Tip: If port `5000` is already used by another app, keep ZapShift API on `5001`.
+
+### Step 5 — Verify
 
 1. Open Home page
 2. Open Explore / Coverage
@@ -441,7 +455,15 @@ Open: `http://localhost:5173`
 
 ### Useful scripts
 
-**Client**
+**Root**
+
+```bash
+npm run install:all   # install client + server deps
+npm run dev:client    # start Vite
+npm run dev:server    # start Express
+```
+
+**Client (`client/`)**
 
 ```bash
 npm run dev       # start Vite
@@ -449,7 +471,7 @@ npm run build     # production build
 npm run preview   # preview build
 ```
 
-**Server**
+**Server (`server/`)**
 
 ```bash
 npm run dev       # start Express
@@ -461,7 +483,7 @@ npm test          # basic route smoke checks
 
 ## 11. Environment Variables
 
-### Frontend (`zap-shift-client/.env`)
+### Frontend (`client/.env`)
 
 ```env
 VITE_apiKey=your_firebase_api_key
@@ -475,7 +497,7 @@ VITE_API_URL=http://localhost:5001
 VITE_image_host_key=optional_imgbb_key
 ```
 
-### Backend (`zap-shift-server/.env`)
+### Backend (`server/.env`)
 
 ```env
 PORT=5001
@@ -535,7 +557,7 @@ Base URL (local): `http://localhost:5001`
 | GET | `/trackings/:trackingId/logs` | Public | Tracking timeline |
 | POST | `/contact` | Public | Contact form |
 
-More details: `Zap-shift-Resources/API_DOCUMENTATION.md`
+More details: `resources/API_DOCUMENTATION.md`
 
 ---
 
