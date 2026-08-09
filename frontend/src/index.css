@@ -74,6 +74,11 @@ body {
   box-sizing: border-box;
 }
 
+/* Smooth continuous partner logo marquee */
+.brands-marquee .swiper-wrapper {
+  transition-timing-function: linear !important;
+}
+
 @keyframes zs-fade-up {
   from { opacity: 0; transform: translateY(14px); }
   to { opacity: 1; transform: translateY(0); }
@@ -95,7 +100,10 @@ body {
   background: color-mix(in srgb, var(--color-base-100) 88%, white);
   box-shadow: var(--zs-shadow);
   padding: 1.25rem;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transition:
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.35s ease;
 }
 
 [data-theme="zs-dark"] .zs-card {
@@ -104,8 +112,18 @@ body {
 }
 
 .zs-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 36px color-mix(in srgb, var(--color-secondary) 16%, transparent);
+  transform: translateY(-6px);
+  border-color: color-mix(in srgb, var(--color-primary) 45%, var(--color-secondary) 20%);
+  box-shadow: 0 22px 40px color-mix(in srgb, var(--color-secondary) 14%, transparent);
+}
+
+.zs-card-media {
+  isolation: isolate;
+}
+
+.zs-card-media img {
+  transform: scale(1);
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .zs-surface {
@@ -204,6 +222,119 @@ body {
     linear-gradient(color-mix(in srgb, var(--color-secondary) 8%, transparent) 1px, transparent 1px),
     linear-gradient(90deg, color-mix(in srgb, var(--color-secondary) 8%, transparent) 1px, transparent 1px);
   background-size: 28px 28px;
+}
+
+/* —— Home ambient background (subtle, professional) —— */
+.zs-ambient-orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(48px);
+  opacity: 0.45;
+  will-change: transform;
+}
+
+.zs-ambient-orb-a {
+  top: 12%;
+  left: -8%;
+  width: min(42vw, 420px);
+  height: min(42vw, 420px);
+  background: color-mix(in srgb, var(--color-primary) 42%, transparent);
+}
+
+.zs-ambient-orb-b {
+  top: 48%;
+  right: -10%;
+  width: min(38vw, 380px);
+  height: min(38vw, 380px);
+  background: color-mix(in srgb, var(--color-accent) 28%, transparent);
+}
+
+.zs-ambient-orb-c {
+  bottom: 8%;
+  left: 28%;
+  width: min(32vw, 300px);
+  height: min(32vw, 300px);
+  background: color-mix(in srgb, var(--color-secondary) 12%, transparent);
+}
+
+.zs-ambient-dots {
+  position: absolute;
+  inset: 0;
+  opacity: 0.35;
+  background-image: radial-gradient(
+    color-mix(in srgb, var(--color-secondary) 16%, transparent) 1px,
+    transparent 1px
+  );
+  background-size: 26px 26px;
+  mask-image: linear-gradient(to bottom, transparent, black 12%, black 88%, transparent);
+  animation: zs-ambient-pan 48s linear infinite;
+}
+
+.zs-ambient-sheen {
+  position: absolute;
+  inset: -20% 0;
+  background: linear-gradient(
+    105deg,
+    transparent 35%,
+    color-mix(in srgb, var(--color-primary) 10%, transparent) 50%,
+    transparent 65%
+  );
+  animation: zs-ambient-sheen 18s ease-in-out infinite;
+}
+
+.zs-ambient-drift-a {
+  animation: zs-ambient-float-a 22s ease-in-out infinite;
+}
+
+.zs-ambient-drift-b {
+  animation: zs-ambient-float-b 28s ease-in-out infinite;
+}
+
+.zs-ambient-drift-c {
+  animation: zs-ambient-float-c 26s ease-in-out infinite;
+}
+
+@keyframes zs-ambient-float-a {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(36px, 28px, 0) scale(1.06); }
+}
+
+@keyframes zs-ambient-float-b {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(-40px, -22px, 0) scale(1.08); }
+}
+
+@keyframes zs-ambient-float-c {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(24px, -30px, 0); }
+}
+
+@keyframes zs-ambient-pan {
+  from { background-position: 0 0; }
+  to { background-position: 26px 26px; }
+}
+
+@keyframes zs-ambient-sheen {
+  0%, 100% { transform: translateX(-18%); opacity: 0.35; }
+  50% { transform: translateX(18%); opacity: 0.55; }
+}
+
+[data-theme="zs-dark"] .zs-ambient-orb {
+  opacity: 0.28;
+}
+
+[data-theme="zs-dark"] .zs-ambient-dots {
+  opacity: 0.22;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zs-ambient-drift-a,
+  .zs-ambient-drift-b,
+  .zs-ambient-drift-c,
+  .zs-ambient-dots,
+  .zs-ambient-sheen {
+    animation: none !important;
+  }
 }
 
 .zs-table-wrap {
@@ -310,8 +441,18 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-up,
-  .zs-card {
+  .zs-card,
+  .zs-card-media img {
     animation: none !important;
     transition: none !important;
+  }
+
+  .zs-card:hover {
+    transform: none;
+  }
+
+  .zs-card:hover .zs-card-media img,
+  .group:hover .zs-card-media img {
+    transform: none !important;
   }
 }

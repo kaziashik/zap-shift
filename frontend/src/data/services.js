@@ -9,7 +9,7 @@ export const services = [
         eta: '4–8 hours',
         rating: 4.9,
         location: 'Major cities',
-        image: 'https://images.unsplash.com/photo-1566576721346-d77f162fa1b5?auto=format&fit=crop&w=800&q=80',
+        image: 'https://images.unsplash.com/photo-1616401784844-554041748bcd?auto=format&fit=crop&w=800&q=80',
         category: 'Delivery',
         features: ['Live tracking', 'OTP confirmation', 'Cashless payment']
     },

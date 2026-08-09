@@ -1,9 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import bannerImg1 from '../../../assets/banner/banner1.png';
 import bannerImg2 from '../../../assets/banner/banner2.png';
 import bannerImg3 from '../../../assets/banner/banner3.png';
+import riderGif from '../../../assets/running.gif';
 
 const slides = [
     {
@@ -44,7 +45,6 @@ const BannerArt = ({ slide, active, variant }) => (
                 transition={{ duration: 0.3 }}
                 className="absolute inset-0 overflow-hidden"
             >
-                {/* 200% width + left -100% = visible window is the right half of the PNG */}
                 <img
                     src={slide.image}
                     alt=""
@@ -58,11 +58,75 @@ const BannerArt = ({ slide, active, variant }) => (
     </div>
 );
 
+/** Letter-by-letter reveal with a rider racing left → right through the title */
+const RiderHeadline = ({ text, slideKey }) => {
+    const reduceMotion = useReducedMotion();
+    const chars = Array.from(text);
+    const letterDelay = 0.028;
+    const rideDuration = Math.max(1.1, chars.length * letterDelay + 0.35);
+
+    if (reduceMotion) {
+        return (
+            <h1 className="text-3xl font-extrabold leading-tight md:text-5xl">
+                {text}
+            </h1>
+        );
+    }
+
+    return (
+        <h1
+            className="relative text-3xl font-extrabold leading-tight md:text-5xl"
+            aria-label={text}
+        >
+            {/* Rider races across the headline */}
+            <motion.span
+                key={`rider-${slideKey}`}
+                className="pointer-events-none absolute -top-7 z-20 inline-flex select-none md:-top-9"
+                initial={{ left: '-8%', opacity: 0 }}
+                animate={{ left: '102%', opacity: [0, 1, 1, 0] }}
+                transition={{
+                    duration: rideDuration,
+                    ease: [0.22, 1, 0.36, 1],
+                    opacity: { times: [0, 0.08, 0.88, 1], duration: rideDuration }
+                }}
+                aria-hidden="true"
+            >
+                <img
+                    src={riderGif}
+                    alt=""
+                    className="h-8 w-auto drop-shadow-md md:h-10"
+                    draggable={false}
+                />
+            </motion.span>
+
+            <span className="relative z-10 inline" aria-hidden="true">
+                {chars.map((char, index) => (
+                    <motion.span
+                        key={`${slideKey}-${index}-${char}`}
+                        className="inline-block"
+                        initial={{ opacity: 0, y: 16, filter: 'blur(4px)' }}
+                        animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                        transition={{
+                            duration: 0.32,
+                            delay: index * letterDelay,
+                            ease: [0.22, 1, 0.36, 1]
+                        }}
+                        style={{ whiteSpace: char === ' ' ? 'pre' : undefined }}
+                    >
+                        {char === ' ' ? '\u00A0' : char}
+                    </motion.span>
+                ))}
+            </span>
+        </h1>
+    );
+};
+
 const Banner = () => {
     const [active, setActive] = React.useState(0);
+    const reduceMotion = useReducedMotion();
 
     React.useEffect(() => {
-        const timer = setInterval(() => setActive((prev) => (prev + 1) % slides.length), 5000);
+        const timer = setInterval(() => setActive((prev) => (prev + 1) % slides.length), 6500);
         return () => clearInterval(timer);
     }, []);
 
@@ -80,25 +144,25 @@ const Banner = () => {
 
                         <div className="mt-4 space-y-4">
                             <AnimatePresence mode="wait">
-                                <motion.h1
+                                <motion.div
                                     key={`title-${active}`}
-                                    initial={{ opacity: 0, y: 14 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -10 }}
-                                    transition={{ duration: 0.3 }}
-                                    className="text-3xl font-extrabold leading-tight md:text-5xl"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0, y: -8 }}
+                                    transition={{ duration: 0.25 }}
+                                    className="pt-8 md:pt-10"
                                 >
-                                    {slide.title}
-                                </motion.h1>
+                                    <RiderHeadline text={slide.title} slideKey={active} />
+                                </motion.div>
                             </AnimatePresence>
 
                             <AnimatePresence mode="wait">
                                 <motion.p
                                     key={`text-${active}`}
-                                    initial={{ opacity: 0, y: 10 }}
+                                    initial={reduceMotion ? false : { opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -8 }}
-                                    transition={{ duration: 0.28 }}
+                                    transition={{ duration: 0.35, delay: reduceMotion ? 0 : 0.35 }}
                                     className="max-w-lg text-base text-white/85 md:text-lg"
                                 >
                                     {slide.text}

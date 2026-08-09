@@ -4,8 +4,10 @@ class TrackingModel {
     }
 
     async findAllByTrackingId(trackingId) {
-        const query = { trackingId };
-        return await this.collection.find(query).toArray();
+        const id = String(trackingId || '').trim();
+        // Case-insensitive exact match so home lookup is forgiving
+        const query = { trackingId: { $regex: `^${id.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, $options: 'i' } };
+        return await this.collection.find(query).sort({ createdAt: 1 }).toArray();
     }
 
     async create(logData) {

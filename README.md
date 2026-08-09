@@ -347,7 +347,7 @@ npm run dev:frontend
 
 Use **Demo login (auto-fill)** on the Login page for the admin account, or sign in manually with either role above.
 
-### Final submission links
+### Final  links
 
 - **Live Website:** https://zap-shift-737f5.web.app/
 - **Live API:** https://zap-shift-server-delta-smoky.vercel.app/

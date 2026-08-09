@@ -9,37 +9,56 @@ import Stats from '../Stats/Stats';
 import Pricing from '../Pricing/Pricing';
 import FAQ from '../FAQ/FAQ';
 import CTA from '../CTA/CTA';
-import Newsletter from '../Newsletter/Newsletter';
+import TrackLookup from '../TrackLookup/TrackLookup';
+import AmbientBg from '../AmbientBg/AmbientBg';
 import SectionHeader from '../../../components/ui/SectionHeader';
 import reviewsData from '../../../data/reviews.json';
 
 const Home = () => {
     return (
-        <div className="w-full pb-0">
-            <Banner />
-            <Stats />
+        <div className="relative w-full pb-0">
+            <AmbientBg />
 
-            <div className="w-full space-y-2 px-4 md:px-6 lg:px-8 xl:px-10">
-                <Features />
-                <HowItWorks />
-                <ServicesPreview />
-                <Pricing />
-                <section className="py-10">
-                    <SectionHeader
-                        eyebrow="Partners"
-                        title="Teams that ship with ZapShift"
-                        subtitle="E-commerce, retail, and office networks moving parcels every day."
-                    />
-                    <div className="zs-surface px-4 py-6">
-                        <Brands />
+            <div className="relative z-[1] w-full">
+                <Banner />
+                <Stats />
+
+                <div className="w-full space-y-2 px-4 md:px-6 lg:px-8 xl:px-10">
+                    <Features />
+                </div>
+
+                {/* Live tracking — directly after Features */}
+                <TrackLookup />
+
+                <div className="w-full space-y-2 px-4 md:px-6 lg:px-8 xl:px-10">
+                    <HowItWorks />
+                    <ServicesPreview />
+                    <Pricing />
+                </div>
+
+                {/* Full-bleed partners strip with small side gaps */}
+                <section className="w-full py-12 md:py-14">
+                    <div className="px-4 md:px-6 lg:px-8 xl:px-10">
+                        <SectionHeader
+                            eyebrow="Partners"
+                            title="Teams that ship with ZapShift"
+                            subtitle="E-commerce, retail, and office networks moving parcels every day."
+                        />
+                    </div>
+                    <div className="w-full px-2 sm:px-3 md:px-4">
+                        <div className="zs-surface overflow-hidden rounded-2xl px-2 py-6 sm:rounded-3xl sm:px-3 md:py-8 lg:px-4">
+                            <Brands />
+                        </div>
                     </div>
                 </section>
-                <Reviews reviews={reviewsData} />
-                <FAQ />
-                <Newsletter />
-            </div>
 
-            <CTA />
+                <div className="w-full space-y-2 px-4 md:px-6 lg:px-8 xl:px-10">
+                    <Reviews reviews={reviewsData} />
+                    <FAQ />
+                </div>
+
+                <CTA />
+            </div>
         </div>
     );
 };
