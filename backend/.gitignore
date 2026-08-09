@@ -4,3 +4,4 @@ zap-shift-firebase-adminsdk.json
 .vercel
 
 .vercel
+.env*
