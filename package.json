@@ -2,11 +2,11 @@
   "name": "zap-shift",
   "version": "1.0.0",
   "private": true,
-  "description": "ZapShift MVP — door-to-door parcel delivery platform",
+  "description": "ZapShift MVP — frontend, backend, resources",
   "scripts": {
-    "dev:client": "npm --prefix client run dev",
-    "dev:server": "npm --prefix server run dev",
-    "install:all": "npm --prefix client install && npm --prefix server install",
-    "build:client": "npm --prefix client run build"
+    "dev:frontend": "npm --prefix frontend run dev",
+    "dev:backend": "npm --prefix backend run dev",
+    "install:all": "npm --prefix frontend install && npm --prefix backend install",
+    "build:frontend": "npm --prefix frontend run build"
   }
 }

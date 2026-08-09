@@ -1,572 +1,361 @@
-# ZapShift
+# 📦 Zap Shift — Parcel Management & Courier Platform
 
-**Door-to-door parcel delivery platform for Bangladesh**
-
-ZapShift is a full-stack logistics web application that streamlines parcel booking, payment, rider assignment, tracking, and delivery for homes and offices across 64 districts.
-
-**Live repo:** [github.com/kaziashik/zap-shift](https://github.com/kaziashik/zap-shift)
+**Live Client:** [https://zap-shift-737f5.web.app/](https://zap-shift-737f5.web.app/)  
+**Live Server (API):** [https://zap-shift-server-delta-smoky.vercel.app/](https://zap-shift-server-delta-smoky.vercel.app/)  
+**GitHub:** [github.com/kaziashik/zap-shift](https://github.com/kaziashik/zap-shift)
 
 ---
 
-## Table of Contents
+# Zap Shift Resources
 
-1. [Project Overview](#1-project-overview)
-2. [Problem Statement](#2-problem-statement)
-3. [Key Features](#3-key-features)
-4. [User Roles & How to Use](#4-user-roles--how-to-use)
-5. [Website Overview (Mermaid)](#5-website-overview-mermaid)
-6. [Delivery Workflow](#6-delivery-workflow)
-7. [Pricing Structure](#7-pricing-structure)
-8. [Tech Stack](#8-tech-stack)
-9. [Folder Structure](#9-folder-structure)
-10. [Local Setup Guide](#10-local-setup-guide)
-11. [Environment Variables](#11-environment-variables)
-12. [Demo Login](#12-demo-login)
-13. [API Overview](#13-api-overview)
+Welcome to **Zap Shift** — a full-stack door-to-door parcel management & courier platform for Bangladesh (64 districts), with User, Admin, and Rider workflows, Stripe payments, Firebase Auth, and OTP-confirmed delivery.
 
 ---
 
-## 1. Project Overview
+## 📊 System Overview Table
 
-ZapShift connects three roles in one platform:
-
-| Role | Purpose |
-|------|---------|
-| **User** | Books parcels, pays delivery charges, tracks shipments |
-| **Admin** | Approves riders, assigns deliveries, monitors operations |
-| **Rider** | Picks up and delivers parcels, updates status |
-
-The product includes:
-
-- Public marketing website (home, services, coverage map, blog, contact)
-- Secure authentication (email/password + Google)
-- Role-based dashboards with charts and tables
-- Dynamic parcel pricing
-- Stripe checkout payments
-- Real-time style tracking timeline
-- Light / dark theme support
+| Role | Key Responsibilities | Earnings/Benefits |
+| --- | --- | --- |
+| **User** | Book parcels, pay charges, track status, review service | Real-time tracking, feedback after delivery |
+| **Admin** | Assign riders, approve agents, monitor operations & analytics | System control, operational oversight |
+| **Rider** | Collect/deliver parcels, update status, OTP confirmation, warehouse handoff | ৳ **80%** same city · **60%** outside city |
 
 ---
 
-## 2. Problem Statement
+## 🛒 Pricing Structure
 
-Traditional courier workflows in Bangladesh often suffer from:
+| Parcel Type | Weight | Within City | Outside City/District |
+| --- | --- | --- | --- |
+| **Document** | Any | ৳60 | ৳80 |
+| **Non-Document** | Up to 3kg | ৳110 | ৳150 |
+| **Non-Document** | >3kg | +৳40/kg | +৳40/kg +৳40 extra |
 
-- Manual booking and unclear pricing
-- Poor visibility after a parcel leaves the sender
-- Weak coordination between pickup riders, hubs, and delivery riders
-- No single place for customers, admins, and field riders to collaborate
-
-**ZapShift solves this** by providing an end-to-end digital system where:
-
-1. Users create accurate door-to-door bookings
-2. Cost is calculated instantly by type, weight, and city
-3. Payment unlocks a unique tracking ID
-4. Admins assign riders and oversee operations
-5. Riders update parcel movement until final delivery
+Pricing is calculated on the client and **re-validated on the server** when a parcel is created.
 
 ---
 
-## 3. Key Features
-
-- Automated pricing for document / non-document parcels
-- Nationwide coverage data (64 districts / service centers)
-- Role-based dashboards (User, Admin, Rider)
-- Stripe card payment integration
-- Tracking timeline by tracking ID
-- Explore page with search, filters, sorting, pagination
-- Contact form with server-side validation
-- Responsive UI + light/dark mode
-- Firebase Authentication (email + Google)
-
----
-
-## 4. User Roles & How to Use
-
-### 4.1 User (Customer)
-
-1. Register / Login
-2. Go to **Send a Parcel**
-3. Fill parcel, sender, and receiver details
-4. Confirm calculated cost and create booking
-5. Pay from **My Parcels**
-6. Track status from tracking ID / dashboard
-7. Update profile from **Settings**
-
-### 4.2 Admin
-
-1. Login with an admin account
-2. Open **Dashboard → Overview / Analytics**
-3. **Approve Riders** (pending applications)
-4. **Assign Riders** to paid parcels
-5. **Manage Users** (make admin / remove admin)
-6. Monitor payments and parcel status charts
-
-### 4.3 Rider
-
-1. Apply from **Be a Rider** (pending until admin approval)
-2. After approval, open Rider dashboard
-3. View **Assigned Deliveries**
-4. Update pickup / delivery status
-5. Check completed deliveries and earnings estimate
-
----
-
-## 5. Website Overview (Mermaid)
-
-```mermaid
-flowchart TB
-    subgraph Public["Public Website"]
-        Home[Home / Landing]
-        Explore[Explore Services]
-        Coverage[Coverage Map]
-        About[About]
-        Blog[Blog]
-        Contact[Contact]
-        Help[Help Center]
-        Track[Parcel Track]
-        Auth[Login / Register]
-    end
-
-    subgraph UserDash["User Dashboard"]
-        UHome[Overview + Charts]
-        MyParcels[My Parcels]
-        Pay[Payment / Stripe]
-        PayHistory[Payment History]
-        Settings[Settings]
-        Send[Send Parcel]
-    end
-
-    subgraph AdminDash["Admin Dashboard"]
-        AHome[Ops Overview]
-        Analytics[Analytics]
-        Approve[Approve Riders]
-        Assign[Assign Riders]
-        Users[Manage Users]
-    end
-
-    subgraph RiderDash["Rider Dashboard"]
-        RHome[Tasks + Earnings]
-        Assigned[Assigned Deliveries]
-        Completed[Completed Deliveries]
-    end
-
-    Home --> Explore
-    Home --> Coverage
-    Home --> Auth
-    Auth --> UserDash
-    Auth --> AdminDash
-    Auth --> RiderDash
-    Send --> MyParcels --> Pay --> Track
-    Approve --> Assign --> Assigned --> Completed
-```
-
-### High-level system architecture
-
-```mermaid
-flowchart LR
-    Browser[React + Vite Client] -->|REST Axios| API[Express API]
-    Browser -->|Auth| Firebase[Firebase Auth]
-    API -->|Verify Token| FirebaseAdmin[Firebase Admin]
-    API --> Mongo[(MongoDB)]
-    API --> Stripe[Stripe Checkout]
-```
-
----
-
-## 6. Delivery Workflow
+## 🚚 Delivery Workflow
 
 ```mermaid
 flowchart TD
-    A[User Adds Parcel] -->|Unpaid| B[User Pays]
-    B -->|Paid / Pending Pickup| C[Admin Assigns Rider]
-    C -->|Driver Assigned| D[Rider Picks Up]
-    D --> E{Same City?}
-    E -->|Yes| F[Ready for Delivery]
-    E -->|No| G[In Transit / Hub Flow]
-    G --> F
-    F --> H[Delivered]
+    A[User Adds Parcel to System] -->|Status: Unpaid| B[User Pays for Parcel Delivery]
+    B -->|Status: Paid| C[Admin Assigns Pickup & Delivery Riders]
+    C -->|Status: Ready-to-Pickup| D[Rider Picks Up Parcel]
+    D -->|Status: In-Transit| E{Within City?}
+    E -- Yes --> F1[Rider Out for Delivery]
+    F1 -->|Status: Ready-for-Delivery + OTP| G1[Rider Delivers Parcel]
+    G1 -->|Status: Delivered| H1[Parcel Delivery Completed]
+    E -- No --> F2[Parcel Reaches Warehouse]
+    F2 -->|Status: Reached-Warehouse| G2[Parcel Shipped to Destination]
+    G2 -->|Status: Shipped| H2[Rider Out for Delivery]
+    H2 -->|Status: Ready-for-Delivery + OTP| I2[Rider Delivers Parcel]
+    I2 -->|Status: Delivered| J2[Parcel Delivery Completed]
 ```
 
 ---
 
-## 7. Pricing Structure
+## 🗂️ Key Features
 
-| Parcel Type | Weight | Within City | Outside City / District |
-|-------------|--------|-------------|-------------------------|
-| Document | Any | ৳60 | ৳80 |
-| Non-Document | Up to 3kg | ৳110 | ৳150 |
-| Non-Document | > 3kg | +৳40/kg | +৳40/kg + ৳40 extra |
-
-Rider commission (display logic):
-
-- Same city: about **80%** of parcel cost
-- Outside city: about **60%** of parcel cost
+- Automated pricing & tracking
+- Role-based access & workflow (User / Admin / Rider)
+- OTP-based secure delivery confirmation
+- Nationwide coverage (64 districts)
+- Transparent rider commission (80% / 60%)
+- Stripe Checkout payments (server verifies with Stripe before marking paid)
+- Post-delivery service reviews
+- Light / dark theme, explore, coverage map, blog, contact
 
 ---
 
-## 8. Tech Stack
+## 🙋 About This Project
 
-### Frontend (`client/`)
-
-| Area | Technology |
-|------|------------|
-| UI Library | **React 19** |
-| Build Tool | **Vite 7** |
-| Routing | **React Router 7** |
-| Styling | **Tailwind CSS 4 + DaisyUI 5** |
-| Animation | **Motion** |
-| Forms | **React Hook Form** |
-| Data Fetching | **TanStack Query + Axios** |
-| Charts | **Recharts** |
-| Maps | **Leaflet / React-Leaflet** |
-| Auth Client | **Firebase Auth** |
-| Payments UI flow | Stripe Checkout (via backend) |
-| Alerts | SweetAlert2 |
-| Icons | React Icons |
-
-### Backend (`server/`)
-
-| Area | Technology |
-|------|------------|
-| Runtime | **Node.js** |
-| Framework | **Express 5** |
-| Database | **MongoDB** (official Node driver) |
-| Auth verification | **Firebase Admin SDK** |
-| Payments | **Stripe** |
-| Config | **dotenv** |
-| Cross-origin | **CORS** |
-
-### Styling approach
-
-- Utility-first styling with **Tailwind CSS**
-- Component themes with **DaisyUI** (`zs-light` / `zs-dark`)
-- Brand colors: lime primary `#CAEB66`, teal secondary `#03373D`, accent teal
-- Shared classes: `.zs-card`, `.zs-surface`, `.zs-btn-primary`
+ZapShift was built to digitize door-to-door courier operations in Bangladesh: clear pricing, paid bookings, admin rider assignment, rider status updates (including warehouse handoff for inter-district), and OTP-confirmed delivery — all in one Firebase + Express + MongoDB stack.
 
 ---
 
-## 9. Folder Structure (MVP)
+## 🏗️ System Architecture — How Everything Talks to Each Other
+
+```mermaid
+sequenceDiagram
+    participant U as User (Browser)
+    participant C as Client (React + Firebase Hosting)
+    participant FB as Firebase Auth
+    participant S as Server (Express + Vercel)
+    participant DB as MongoDB Atlas
+    participant ST as Stripe
+
+    U->>C: Register / Login
+    C->>FB: Authenticate user
+    FB-->>C: ID Token (JWT)
+
+    U->>C: Book a parcel (Send Parcel form)
+    C->>S: POST /parcels (with Bearer token)
+    S->>FB: Verify ID token
+    S->>DB: Save parcel (status: unpaid)
+    S-->>C: Parcel created
+
+    U->>C: Go to Payment page
+    C->>S: POST /payment-checkout-session
+    S->>ST: stripe.checkout.sessions.create()
+    ST-->>S: Session URL
+    S-->>C: { url }
+    C->>U: Redirect to Stripe Checkout
+    U->>ST: Completes payment
+    ST-->>C: Redirect back with session_id
+
+    C->>S: PATCH /payment-success?session_id=xxx
+    S->>ST: Retrieve session (verify paid)
+    S->>DB: Update parcel status: paid
+    S->>DB: Save payment record
+    S-->>C: Payment confirmed
+
+    Note over U,S: Admin workflow
+    U->>C: Admin assigns rider
+    C->>S: PATCH /parcels/:id (assign rider)
+    S->>DB: Update parcel → ready-to-pickup
+
+    Note over U,S: Rider workflow
+    U->>C: Rider updates delivery status (+ OTP on deliver)
+    C->>S: PATCH /parcels/:id/status
+    S->>DB: Update status + log tracking event
+
+    U->>C: Track parcel
+    C->>S: GET /trackings/:trackingId/logs
+    S->>DB: Fetch tracking history
+    S-->>C: Tracking log timeline
+```
+
+**In short:** Firebase handles who you are, the Express server (guarded by Firebase token verification) handles what you're allowed to do, MongoDB stores parcel/user/rider/payment/review data, and Stripe handles money — the server only marks something **paid** after double-checking with Stripe.
+
+---
+
+## 🧰 Tech Stack
+
+### Frontend (`frontend/`)
+
+| Technology | Purpose |
+| --- | --- |
+| **React 19** | Core UI library |
+| **Vite** | Dev server & build tool |
+| **Tailwind CSS + DaisyUI** | Styling |
+| **React Router** | Public, private, Admin/Rider routes |
+| **TanStack Query** | Server-state caching & refetch |
+| **Axios** | HTTP + secure Firebase token instance |
+| **Firebase Auth** | Email/password + Google login |
+| **React Hook Form** | Form validation |
+| **Leaflet / React-Leaflet** | Coverage maps |
+| **Recharts** | Admin/Rider dashboard charts |
+| **SweetAlert2** | Alerts / OTP / confirmations |
+| **Swiper / Carousel** | Homepage sliders |
+| **Motion** | Light UI animation |
+
+### Backend (`backend/`)
+
+| Technology | Purpose |
+| --- | --- |
+| **Node.js + Express** | REST API |
+| **MongoDB (native driver)** | users, parcels, payments, riders, trackings, contacts, reviews |
+| **Firebase Admin SDK** | Verify Firebase ID tokens |
+| **Stripe** | Checkout Sessions |
+| **CORS + dotenv** | Cross-origin + env config |
+| **Vercel** | API hosting |
+
+---
+
+## 📁 Folder Structure (MVP)
 
 ```text
 zap-shift/
-├── package.json                  # Root scripts (install/dev helpers)
+├── frontend/          # React + Vite client
+├── backend/           # Express + MongoDB API
+├── resources/         # Specs, Postman, data, animations
 ├── README.md
-├── .gitignore
-├── client/                       # Frontend MVP (React + Vite)
-├── server/                       # Backend MVP (Express + MongoDB)
-└── resources/                    # Specs, assets, Postman, Figma refs
+├── package.json       # Root helper scripts
+└── .gitignore
 ```
 
-### Frontend structure
+### Backend — `backend/`
 
 ```text
-client/
-├── public/
-│   ├── reviews.json
-│   └── serviceCenters.json
-├── src/
-│   ├── assets/                   # Images, lottie JSON, brands
-│   ├── components/
-│   │   ├── CenterCard/
-│   │   ├── Dashboard/            # StatCard, ProfileCard, StatusBadge
-│   │   ├── Forbidden/
-│   │   ├── Loading/
-│   │   ├── Logo/
-│   │   ├── ServiceCard/
-│   │   ├── ThemeToggle/
-│   │   └── ui/                   # SectionHeader, SkeletonCard
-│   ├── contexts/
-│   │   ├── AuthContext/
-│   │   └── ThemeContext/
-│   ├── data/
-│   │   └── services.js           # Services, FAQ, blogs, stats
-│   ├── firebase/
-│   │   └── firebase.init.js
-│   ├── hooks/
-│   │   ├── useAuth.jsx
-│   │   ├── useAxios.jsx
-│   │   ├── useAxiosSecure.jsx
-│   │   ├── usePagination.js
-│   │   ├── useRole.jsx
-│   │   └── useTheme.jsx
-│   ├── layouts/
-│   │   ├── AuthLayout.jsx
-│   │   ├── DashboardLayout.jsx
-│   │   └── RootLayout.jsx
-│   ├── pages/
-│   │   ├── About/
-│   │   ├── Auth/                 # Login, Register, SocialLogin
-│   │   ├── Blog/
-│   │   ├── Contact/
-│   │   ├── Coverage/
-│   │   ├── Dashboard/
-│   │   │   ├── Analytics/
-│   │   │   ├── ApproveRiders/
-│   │   │   ├── AssignRiders/
-│   │   │   ├── AssignedDeliveries/
-│   │   │   ├── CompletedDeliveries/
-│   │   │   ├── DashboardHome/
-│   │   │   ├── MyParcels/
-│   │   │   ├── Payment/
-│   │   │   ├── PaymentHistory/
-│   │   │   ├── Settings/
-│   │   │   └── UsersManagement/
-│   │   ├── Explore/
-│   │   ├── Help/
-│   │   ├── Home/                 # Banner, Features, FAQ, CTA...
-│   │   ├── NotFound/
-│   │   ├── ParcelTrack/
-│   │   ├── Rider/
-│   │   ├── ServiceDetails/
-│   │   ├── Shared/               # NavBar, Footer
-│   │   └── sendParcel/
-│   ├── routes/
-│   │   ├── router.jsx
-│   │   ├── PrivateRoute.jsx
-│   │   ├── AdminRoute.jsx
-│   │   └── RiderRoute.jsx
-│   ├── index.css
-│   └── main.jsx
-├── package.json
-└── vite.config.js
-```
-
-### Backend structure
-
-```text
-server/
-├── config/
-│   ├── database.js               # MongoDB connection
-│   └── firebase.js               # Firebase Admin init
-├── controllers/
-│   ├── contactController.js
-│   ├── parcelController.js
-│   ├── paymentController.js
-│   ├── riderController.js
-│   ├── trackingController.js
-│   ├── userController.js
-│   └── index.js
-├── middleware/
-│   ├── auth.js                   # verifyFBToken, verifyAdmin, verifyRider
-│   ├── collections.js
-│   ├── errorHandler.js
-│   ├── logging.js
-│   └── validate.js
+backend/
+├── config/            # database.js, firebase.js
+├── controllers/       # parcel, payment, rider, tracking, user, contact, review
+├── middleware/        # auth, collections, logging, validate, errorHandler
 ├── models/
-│   ├── Contact.js
-│   ├── Parcel.js
-│   ├── Payment.js
-│   ├── Rider.js
-│   ├── Tracking.js
-│   ├── User.js
-│   └── index.js
 ├── routes/
-│   ├── contact.js
-│   ├── parcels.js
-│   ├── payments.js
-│   ├── riders.js
-│   ├── trackings.js
-│   └── users.js
-├── utils/
-│   └── trackingId.js
-├── index.js                      # App entry
+├── utils/             # trackingId, pricing, deliveryStatus
+├── index.js
 ├── package.json
-├── SETUP.md
-└── .env                          # Local secrets (not committed)
+└── vercel.json
+```
+
+### Frontend — `frontend/`
+
+```text
+frontend/
+└── src/
+    ├── components/
+    ├── contexts/          # Auth + Theme
+    ├── data/              # serviceCenters, services, reviews
+    ├── firebase/
+    ├── hooks/             # useAuth, useAxios, useAxiosSecure, useRole
+    ├── layouts/
+    ├── pages/             # Home, Auth, Coverage, Dashboard, SendParcel, …
+    └── routes/            # PrivateRoute, AdminRoute, RiderRoute, router
 ```
 
 ---
 
-## 10. Local Setup Guide
+## 🔌 API Endpoints
 
-### Prerequisites
+**Base URL (production):** `https://zap-shift-server-delta-smoky.vercel.app`  
+**Local:** `http://localhost:5001`
 
-- Node.js **18+** (recommended 20+)
-- npm
-- MongoDB Atlas account (or local MongoDB)
-- Firebase project (Authentication enabled)
-- Stripe test account (for payments)
-- Git
+### Users — `/users`
 
-### Step 1 — Clone the repository
+| Method | Endpoint | Auth | Description |
+| --- | --- | --- | --- |
+| GET | `/users` | 🔒 Token | Get users (search) |
+| GET | `/users/:id` | 🔒 Token | Get user by ID |
+| GET | `/users/:email/role` | 🔒 Token | Get role by email |
+| POST | `/users` | Public | Create user |
+| PATCH | `/users/:id/role` | 🔒 Admin | Update role |
+
+### Parcels — `/parcels`
+
+| Method | Endpoint | Auth | Description |
+| --- | --- | --- | --- |
+| GET | `/parcels` | 🔒 Token | List parcels |
+| GET | `/parcels/rider` | 🔒 Rider | Rider’s parcels |
+| GET | `/parcels/delivery-status/stats` | 🔒 Admin | Status counts for charts |
+| GET | `/parcels/:id` | 🔒 Token | Parcel by ID |
+| POST | `/parcels` | 🔒 Token | Create (server pricing check) |
+| PATCH | `/parcels/:id/status` | 🔒 Token | Update status (+ OTP on deliver) |
+| PATCH | `/parcels/:id` | 🔒 Admin | Assign rider → `ready-to-pickup` |
+| DELETE | `/parcels/:id` | 🔒 Token | Delete (owner unpaid / admin) |
+
+### Payments
+
+| Method | Endpoint | Auth | Description |
+| --- | --- | --- | --- |
+| POST | `/payment-checkout-session` | 🔒 Token* | Create Stripe session |
+| PATCH | `/payment-success` | Public | Verify Stripe + mark `paid` |
+| GET | `/payments` | 🔒 Token | Payment history |
+
+\*Client sends Firebase token via secure axios.
+
+### Riders — `/riders`
+
+| Method | Endpoint | Auth | Description |
+| --- | --- | --- | --- |
+| GET | `/riders` | 🔒 Token | List riders |
+| GET | `/riders/delivery-per-day` | 🔒 Rider | Daily delivery stats |
+| POST | `/riders` | Public | Apply as rider (pending) |
+| PATCH | `/riders/:id` | 🔒 Admin | Approve / update status |
+
+### Trackings — `/trackings`
+
+| Method | Endpoint | Auth | Description |
+| --- | --- | --- | --- |
+| GET | `/trackings/:trackingId/logs` | Public/Token | Tracking timeline |
+
+### Reviews — `/reviews`
+
+| Method | Endpoint | Auth | Description |
+| --- | --- | --- | --- |
+| GET | `/reviews` | Public | List reviews |
+| POST | `/reviews` | 🔒 Token | Review a delivered parcel |
+
+> 🔒 **Token** = `Authorization: Bearer <Firebase ID token>`  
+> **Admin/Rider** = role checked in MongoDB after token verify.
+
+---
+
+## ⚙️ Installation Guide
+
+### 1. Clone
 
 ```bash
 git clone https://github.com/kaziashik/zap-shift.git
 cd zap-shift
 ```
 
-### Step 2 — Install dependencies
-
-From the project root:
+### 2. Backend
 
 ```bash
-npm run install:all
-```
-
-Or manually:
-
-```bash
-cd server
-npm install
-cd ../client
+cd backend
 npm install
 ```
 
-### Step 3 — Environment files
-
-Create `server/.env` and `client/.env` (see [Environment Variables](#11-environment-variables)).
-
-### Step 4 — Start the apps
-
-Terminal 1 (API):
-
-```bash
-cd server
-npm run dev
-```
-
-Terminal 2 (Frontend):
-
-```bash
-cd client
-npm run dev
-```
-
-Or from root:
-
-```bash
-npm run dev:server
-npm run dev:client
-```
-
-- Frontend: `http://localhost:5173`
-- API: `http://localhost:5001`
-
-> Tip: If port `5000` is already used by another app, keep ZapShift API on `5001`.
-
-### Step 5 — Verify
-
-1. Open Home page
-2. Open Explore / Coverage
-3. Register or use demo login
-4. Create a parcel (logged in)
-5. Check dashboard routes by role
-
-### Useful scripts
-
-**Root**
-
-```bash
-npm run install:all   # install client + server deps
-npm run dev:client    # start Vite
-npm run dev:server    # start Express
-```
-
-**Client (`client/`)**
-
-```bash
-npm run dev       # start Vite
-npm run build     # production build
-npm run preview   # preview build
-```
-
-**Server (`server/`)**
-
-```bash
-npm run dev       # start Express
-npm start         # start Express
-npm test          # basic route smoke checks
-```
-
----
-
-## 11. Environment Variables
-
-### Frontend (`client/.env`)
-
-```env
-VITE_apiKey=your_firebase_api_key
-VITE_authDomain=your_project.firebaseapp.com
-VITE_projectId=your_project_id
-VITE_storageBucket=your_project.appspot.com
-VITE_messagingSenderId=your_sender_id
-VITE_appId=your_app_id
-
-VITE_API_URL=http://localhost:5001
-VITE_image_host_key=optional_imgbb_key
-```
-
-### Backend (`server/.env`)
+Create `backend/.env`:
 
 ```env
 PORT=5001
-
-DB_USER=your_mongodb_user
-DB_PASS=your_mongodb_password
-
-STRIPE_SECRET_KEY=sk_test_xxxxxxxx
+DB_USER=
+DB_PASS=
+FB_SERVICE_KEY=
+STRIPE_SECRET_KEY=
 SITE_DOMAIN=http://localhost:5173
-
-# Firebase Admin service account JSON (stringified / base64 style used by project)
-FB_SERVICE_KEY=your_firebase_admin_json
-
-CLIENT_URL=http://localhost:5173
 ```
 
-> Never commit `.env` files. They are ignored by Git.
+```bash
+npm run dev
+```
+
+### 3. Frontend
+
+```bash
+cd frontend
+npm install
+```
+
+Create `frontend/.env`:
+
+```env
+VITE_apiKey=
+VITE_authDomain=
+VITE_projectId=
+VITE_storageBucket=
+VITE_messagingSenderId=
+VITE_appId=
+VITE_API_URL=http://localhost:5001
+VITE_image_host_key=
+```
+
+```bash
+npm run dev
+```
+
+Client: `http://localhost:5173` · API: `http://localhost:5001`
+
+### Root helpers
+
+```bash
+npm run install:all
+npm run dev:backend
+npm run dev:frontend
+```
 
 ---
 
-## 12. Demo Login
+## 👤 Demo Credentials (Submission)
 
-After creating the demo user in Firebase (or registering from UI):
+| Role | Email | Password |
+| --- | --- | --- |
+| **Admin** | `demo@zapshift.com` | `Demo@12345` |
+| **User** | `user@zapshift.com` | `User@12345` |
 
-| Field | Value |
-|-------|--------|
-| Email | `demo@zapshift.com` |
-| Password | `Demo@12345` |
+Use **Demo login (auto-fill)** on the Login page for the admin account, or sign in manually with either role above.
 
-On the Login page, click **Demo login (auto-fill)** then **Login**.
+### Final submission links
 
-To create an admin:
-
-1. Register/login as a normal user
-2. Update that user’s `role` to `admin` in MongoDB `users` collection  
-   **or** use an existing admin account from **Users Management**
+- **Live Website:** https://zap-shift-737f5.web.app/
+- **Live API:** https://zap-shift-server-delta-smoky.vercel.app/
+- **GitHub (Frontend + Backend):** https://github.com/kaziashik/zap-shift
 
 ---
 
-## 13. API Overview
+## 👤 Author
 
-Base URL (local): `http://localhost:5001`
-
-| Method | Endpoint | Access | Description |
-|--------|----------|--------|-------------|
-| GET | `/` | Public | API health |
-| POST | `/users` | Public | Create user profile |
-| GET | `/users/:email/role` | Auth | Get role |
-| GET | `/parcels` | Auth | List parcels |
-| POST | `/parcels` | Auth | Create parcel |
-| PATCH | `/parcels/:id/status` | Auth | Update delivery status |
-| POST | `/payment-checkout-session` | Public/Auth flow | Create Stripe session |
-| GET | `/payments` | Auth | Payment history |
-| GET | `/riders` | Auth | List riders |
-| POST | `/riders` | Public/Auth flow | Apply as rider |
-| PATCH | `/riders/:id` | Admin | Approve/reject rider |
-| GET | `/trackings/:trackingId/logs` | Public | Tracking timeline |
-| POST | `/contact` | Public | Contact form |
-
-More details: `resources/API_DOCUMENTATION.md`
-
----
-
-## License
-
-This project is for learning / portfolio use unless otherwise specified by the author.
-
----
-
-## Author
-
-Built as a production-style parcel logistics platform project — **ZapShift**.
+**Ashik (kaziashik)**  
+GitHub: [github.com/kaziashik](https://github.com/kaziashik)
