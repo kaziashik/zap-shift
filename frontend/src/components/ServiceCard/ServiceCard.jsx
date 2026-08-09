@@ -5,11 +5,11 @@ import { FaStar, FaMapMarkerAlt } from 'react-icons/fa';
 const ServiceCard = ({ service }) => {
     return (
         <article className="zs-card group overflow-hidden">
-            <div className="zs-card-media relative mb-4 overflow-hidden rounded-xl">
+            <div className="zs-card-media relative mb-4 overflow-hidden rounded-xl bg-base-200">
                 <img
                     src={service.image}
                     alt={service.title}
-                    className="h-44 w-full object-cover transition-transform duration-500 ease-out will-change-transform group-hover:scale-110"
+                    className="h-44 w-full object-cover object-center transition-transform duration-500 ease-out will-change-transform group-hover:scale-110"
                     loading="lazy"
                 />
                 <div

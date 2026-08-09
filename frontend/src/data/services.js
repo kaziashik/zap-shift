@@ -9,7 +9,7 @@ export const services = [
         eta: '4–8 hours',
         rating: 4.9,
         location: 'Major cities',
-        image: 'https://images.unsplash.com/photo-1616401784844-554041748bcd?auto=format&fit=crop&w=800&q=80',
+        image: 'https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=800&q=80',
         category: 'Delivery',
         features: ['Live tracking', 'OTP confirmation', 'Cashless payment']
     },
@@ -69,7 +69,7 @@ export const services = [
         eta: '24–48 hours',
         rating: 4.9,
         location: 'Select corridors',
-        image: 'https://images.unsplash.com/photo-1578574577315-2fdebee81d79?auto=format&fit=crop&w=800&q=80',
+        image: 'https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?auto=format&fit=crop&w=800&q=80',
         category: 'Secure',
         features: ['Dual verification', 'Priority riders', 'Damage support']
     }
@@ -132,7 +132,7 @@ export const blogs = [
         date: '2026-06-28',
         category: 'Operations',
         readTime: '4 min',
-        image: 'https://images.unsplash.com/photo-1616401784844-554041748bcd?auto=format&fit=crop&w=900&q=80',
+        image: 'https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=900&q=80',
         content: 'Riders work with assigned queues for pickup and delivery. Status changes are logged into tracking history so senders can audit movement. Clear address notes and reachable phone numbers remain the biggest factors in first-attempt success rates.'
     },
     {
