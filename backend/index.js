@@ -19,19 +19,34 @@ const reviewRoutes = require('./routes/reviews');
 const app = express();
 const port = process.env.PORT || 3000;
 
-const allowedOrigins = (process.env.CLIENT_URL || 'http://localhost:5173,http://localhost:5174')
-    .split(',')
-    .map((origin) => origin.trim());
+const defaultOrigins = [
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'http://localhost:5175',
+    'https://zap-shift-737f5.web.app',
+    'https://zap-shift-737f5.firebaseapp.com'
+];
+
+const allowedOrigins = [
+    ...defaultOrigins,
+    ...(process.env.CLIENT_URL || '').split(','),
+    process.env.SITE_DOMAIN || ''
+]
+    .map((origin) => origin.trim())
+    .filter(Boolean);
 
 app.use(express.json({ limit: '1mb' }));
 app.use(cors({
     origin(origin, callback) {
-        if (!origin || process.env.NODE_ENV !== 'production' || allowedOrigins.includes(origin)) {
+        // Allow non-browser / same-origin tools (no Origin header)
+        if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
             return;
         }
-        callback(new Error('Not allowed by CORS'));
-    }
+        // Deny without throwing (throwing becomes a 500 and breaks preflight)
+        callback(null, false);
+    },
+    credentials: true
 }));
 
 app.get('/', (req, res) => {

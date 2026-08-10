@@ -60,7 +60,7 @@ const UserDashboardHome = () => {
         <div className="space-y-6">
             {isError && (
                 <div className="rounded-xl border border-error/30 bg-error/10 px-4 py-3 text-sm text-error">
-                    Could not load parcel stats. Check that the API is running on port 5001.
+                    Could not load parcel stats. The API may be unreachable — try refreshing, or check your connection.
                 </div>
             )}
             <div className="animate-fade-up">
