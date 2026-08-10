@@ -343,7 +343,8 @@ npm run dev:frontend
 | Role | Email | Password |
 | --- | --- | --- |
 | **Admin** | `demo@zapshift.com` | `Demo@12345` |
-| **User** | `user@zapshift.com` | `User@12345` |
+| **User / Customer** | `user@zapshift.com` | `User@12345` |
+| **Rider** | `rider@zapshift.com` | `Rider@12345` |
 
 Use **Demo login (auto-fill)** on the Login page for the admin account, or sign in manually with either role above.
 

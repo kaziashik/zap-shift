@@ -37,7 +37,6 @@ const NavBar = () => {
             <li><NavLink to="/explore" className={linkClass} onClick={() => setMenuOpen(false)}>Services</NavLink></li>
             <li><NavLink to="/coverage" className={linkClass} onClick={() => setMenuOpen(false)}>Coverage</NavLink></li>
             <li><NavLink to="/about" className={linkClass} onClick={() => setMenuOpen(false)}>About</NavLink></li>
-            {!user && <li><NavLink to="/login" className={linkClass} onClick={() => setMenuOpen(false)}>Login</NavLink></li>}
         </>
     );
 
@@ -83,6 +82,12 @@ const NavBar = () => {
                         >
                             {publicLinks}
                             {authLinks}
+                            {!user && (
+                                <>
+                                    <li><NavLink to="/login" className={linkClass} onClick={() => setMenuOpen(false)}>Login</NavLink></li>
+                                    <li><NavLink to="/register" className={linkClass} onClick={() => setMenuOpen(false)}>Register</NavLink></li>
+                                </>
+                            )}
                             <li className="mt-1 border-t border-base-300 pt-1">
                                 <NavLink to="/send-parcel" className={linkClass} onClick={() => setMenuOpen(false)}>
                                     Send Parcel
@@ -122,12 +127,20 @@ const NavBar = () => {
                             </ul>
                         </div>
                     ) : (
-                        <Link
-                            to="/register"
-                            className="btn btn-sm h-10 min-h-0 rounded-xl border border-base-300 bg-base-100 px-4 font-semibold hover:border-secondary/30"
-                        >
-                            Register
-                        </Link>
+                        <>
+                            <Link
+                                to="/login"
+                                className="btn btn-sm h-10 min-h-0 rounded-xl border border-base-300 bg-base-100 px-4 font-semibold hover:border-secondary/30"
+                            >
+                                Login
+                            </Link>
+                            <Link
+                                to="/register"
+                                className="btn btn-sm h-10 min-h-0 rounded-xl border border-base-300 bg-base-100 px-4 font-semibold hover:border-secondary/30"
+                            >
+                                Register
+                            </Link>
+                        </>
                     )}
                     <Link
                         to="/send-parcel"
