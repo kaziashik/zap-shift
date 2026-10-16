@@ -45,7 +45,150 @@ The platform is built as two separate applications in one monorepo.
 - **Frontend:** React 19 with Vite, React Router for public / private / role routes, Tailwind CSS + DaisyUI for the interface, TanStack Query for data fetching, Axios with Firebase ID tokens for secure API calls, Leaflet coverage maps, Recharts dashboards, SweetAlert2 confirmations, and dark / light theme support.
 - **Backend:** Express 5 with MongoDB (native driver), Firebase Admin SDK for token verification and role-based access (`user` / `rider` / `admin`), and a strict parcel status flow (`unpaid` → `paid` → `ready-to-pickup` → `in-transit` → `ready-for-delivery` / warehouse path → `delivered`). It also includes Stripe Checkout with server-side session verification before marking a parcel paid, OTP hashing for delivery proof, and tracking event logs for every status change.
 
+---
 
+## Project Flowchart
+
+### Role-based App Flow
+
+```mermaid
+flowchart TD
+  A["👤 Visitor"] --> B{"🔐 Authenticated?"}
+  B -->|No| C["🌐 Public Pages<br/>Home / Coverage / Track / Blog"]
+  B -->|Yes| D{"🎭 User Role"}
+
+  C --> E["🔑 Login / Register"]
+  E --> D
+
+  D -->|user| F["📦 User Dashboard"]
+  D -->|rider| G["🛵 Rider Dashboard"]
+  D -->|admin| H["🛠️ Admin Dashboard"]
+
+  F --> I["📝 Send Parcel"]
+  I --> J["📭 Create Parcel · unpaid"]
+  J --> K["💳 Stripe Checkout"]
+  K --> L["✅ Payment Success · paid"]
+  L --> H
+
+  H --> M["🧑‍✈️ Assign Rider · ready-to-pickup"]
+  M --> G
+  G --> N["📍 Status Updates + 🔢 OTP Deliver"]
+  N --> O["📬 delivered"]
+  O --> F
+
+  F --> P["📋 My Parcels / 💰 Payments / ⭐ Reviews / ⚙️ Settings"]
+
+  classDef public fill:#e0f2fe,stroke:#0284c7,color:#0c4a6e
+  classDef user fill:#dcfce7,stroke:#16a34a,color:#14532d
+  classDef rider fill:#fef9c3,stroke:#ca8a04,color:#713f12
+  classDef admin fill:#ede9fe,stroke:#7c3aed,color:#4c1d95
+  classDef pay fill:#ffe4e6,stroke:#e11d48,color:#881337
+
+  class A,B,C,E public
+  class F,I,J,O,P user
+  class G,N rider
+  class H,M admin
+  class K,L pay
+```
+
+### Delivery Workflow (Same City vs Outside)
+
+```mermaid
+flowchart TD
+    A["📝 User Adds Parcel"] -->|unpaid| B["💳 Pays via Stripe"]
+    B -->|paid| C["🛠️ Admin Assigns Rider"]
+    C -->|ready-to-pickup| D["🛵 Rider Picks Up"]
+    D -->|in-transit| E{"🏙️ Same City?"}
+    E -- Yes --> F["🚚 Out for Delivery + 🔢 OTP"]
+    F --> G["📬 Delivered"]
+    E -- No --> H["🏭 Reached Warehouse"]
+    H --> I["✈️ Shipped"]
+    I --> J["🚚 Out for Delivery + 🔢 OTP"]
+    J --> K["📬 Delivered"]
+
+    classDef step fill:#f0f9ff,stroke:#0369a1,color:#0c4a6e
+    classDef decide fill:#fef3c7,stroke:#d97706,color:#92400e
+    classDef done fill:#dcfce7,stroke:#16a34a,color:#14532d
+
+    class A,B,C,D,F,H,I,J step
+    class E decide
+    class G,K done
+```
+
+### Sequence Diagram — End-to-End Parcel Lifecycle
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor U as 👤 User
+    participant C as 💻 Client<br/>React + Vite
+    participant FB as 🔥 Firebase Auth
+    participant S as 🖥️ Server<br/>Express API
+    participant DB as 🗄️ MongoDB
+    participant ST as 💳 Stripe
+    actor A as 🛠️ Admin
+    actor R as 🛵 Rider
+
+    U->>C: 🔑 Register / Login
+    C->>FB: Authenticate
+    FB-->>C: ID Token JWT
+
+    U->>C: 📝 Book parcel Send Parcel
+    C->>S: POST /parcels + Bearer token
+    S->>FB: Verify ID token
+    S->>DB: Save parcel unpaid
+    S-->>C: ✅ Parcel created
+
+    U->>C: 💳 Go to Payment
+    C->>S: POST /payment-checkout-session
+    S->>ST: Create Checkout Session
+    ST-->>S: Session URL
+    S-->>C: { url }
+    C->>U: Redirect to Stripe
+    U->>ST: Complete payment
+    ST-->>C: Redirect + session_id
+
+    C->>S: PATCH /payment-success
+    S->>ST: Verify session paid
+    S->>DB: Update parcel → paid
+    S->>DB: Save payment record
+    S-->>C: ✅ Payment confirmed
+
+    A->>C: 🧑‍💼 Assign rider
+    C->>S: PATCH /parcels/:id
+    S->>DB: Status → ready-to-pickup
+
+    R->>C: 📦 Update delivery status
+    C->>S: PATCH /parcels/:id/status
+    S->>DB: Status + tracking log
+
+    R->>C: 🔢 Confirm delivery with OTP
+    C->>S: PATCH status → delivered + OTP
+    S->>DB: Mark delivered + log
+    S-->>C: 📬 Delivery complete
+
+    U->>C: 🔎 Track parcel
+    C->>S: GET /trackings/:id/logs
+    S->>DB: Fetch timeline
+    S-->>C: 📍 Tracking history
+
+    U->>C: ⭐ Leave review
+    C->>S: POST /reviews
+    S->>DB: Save review
+```
+
+### High-level Architecture
+
+```text
+🖥️ Browser (React + Vite Frontend)
+        |  🔥 Firebase ID token + Axios
+        v
+⚙️ Express API (backend)
+        |
+        +--> 🗄️ MongoDB Atlas (users, parcels, riders, payments, trackings, reviews)
+        +--> 🔥 Firebase Admin (token verify)
+        +--> 💳 Stripe (checkout + payment verify)
+```
 
 ---
 
@@ -206,66 +349,6 @@ Pricing is calculated on the client and **re-validated on the server** when a pa
 - Responsive, mobile-first layouts
 - Dashboard tables, status badges, and Recharts analytics
 - Coverage map for nationwide service awareness
-
----
-
-## Project Flowchart
-
-```mermaid
-flowchart TD
-  A[Visitor] --> B{Authenticated?}
-  B -->|No| C[Public Pages<br/>Home / Coverage / Track / Blog]
-  B -->|Yes| D{User Role}
-
-  C --> E[Login / Register]
-  E --> D
-
-  D -->|user| F[User Dashboard]
-  D -->|rider| G[Rider Dashboard]
-  D -->|admin| H[Admin Dashboard]
-
-  F --> I[Send Parcel]
-  I --> J[Create Parcel unpaid]
-  J --> K[Stripe Checkout]
-  K --> L[Payment Success → paid]
-  L --> H
-
-  H --> M[Assign Rider → ready-to-pickup]
-  M --> G
-  G --> N[Status Updates + OTP Deliver]
-  N --> O[delivered]
-  O --> F
-
-  F --> P[My Parcels / Payments / Reviews / Settings]
-```
-
-### High-level Architecture
-```text
-Browser (React + Vite Frontend)
-        |  Firebase ID token + Axios
-        v
-Express API (backend)
-        |
-        +--> MongoDB Atlas (users, parcels, riders, payments, trackings, reviews)
-        +--> Firebase Admin (token verify)
-        +--> Stripe (checkout + payment verify)
-```
-
-### Delivery Workflow (Same City vs Outside)
-
-```mermaid
-flowchart TD
-    A[User Adds Parcel] -->|unpaid| B[User Pays via Stripe]
-    B -->|paid| C[Admin Assigns Rider]
-    C -->|ready-to-pickup| D[Rider Picks Up]
-    D -->|in-transit| E{Same City?}
-    E -- Yes --> F[ready-for-delivery + OTP]
-    F --> G[delivered]
-    E -- No --> H[reached-warehouse]
-    H --> I[shipped]
-    I --> J[ready-for-delivery + OTP]
-    J --> K[delivered]
-```
 
 ---
 
