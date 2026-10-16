@@ -22,25 +22,30 @@ A modern, full-stack parcel delivery platform for Bangladesh (64 districts). Cus
 
 ## Project Overview
 
-Zap Shift is a responsive **React + Express** application for door-to-door courier operations across Bangladesh. Customers create parcels with pickup and delivery details, pay via Stripe, and track status in real time. Riders manage assigned pickups and deliveries (including warehouse handoff for inter-district). Admins approve riders, assign parcels, and monitor platform analytics.
+**Zap Shift — Parcel Management & Courier Platform**
+
+Zap Shift is a full-stack door-to-door parcel delivery marketplace designed to connect customers with riders through secure online booking, payment, tracking, and OTP-confirmed delivery across Bangladesh (64 districts). The system has three roles: **User**, **Rider**, and **Admin**, each with different permissions and responsibilities.
+
+### 1. User Module (Customer)
+
+Users can create parcels with type (document / non-document), weight, sender and receiver details, region, and service center, then see the delivery cost calculated from the pricing rules. They can track each parcel by tracking ID, view unpaid and paid parcels from their dashboard, and pay securely with **Stripe Checkout**. After payment, they follow the full status pipeline (ready-to-pickup → in-transit → delivered). After a parcel is delivered, users can leave a review, and they can view their parcels, payments, and profile through the user dashboard.
+
+### 2. Rider Module
+
+Riders apply through the rider application form and wait for admin approval. Once approved, they receive assigned pickups and deliveries from their dashboard. For same-city parcels they collect and deliver directly; for outside-city parcels they hand off to the warehouse, then continue after shipping. Riders update status at each step and confirm final delivery with an **OTP**. They can also view completed deliveries and commission earnings (**80%** same city · **60%** outside city).
+
+### 3. Admin Module
+
+Admins moderate the whole platform. They can approve or reject rider applications, assign riders to paid parcels, and manage users (search and role updates). They monitor parcel operations, delivery-status analytics, and overall platform statistics from the admin dashboard. Admin accounts are created / elevated in the database (or by an existing admin) and are not available as a public self-registration role.
+
+### Technology Stack
+
+The platform is built as two separate applications in one monorepo.
+
+- **Frontend:** React 19 with Vite, React Router for public / private / role routes, Tailwind CSS + DaisyUI for the interface, TanStack Query for data fetching, Axios with Firebase ID tokens for secure API calls, Leaflet coverage maps, Recharts dashboards, SweetAlert2 confirmations, and dark / light theme support.
+- **Backend:** Express 5 with MongoDB (native driver), Firebase Admin SDK for token verification and role-based access (`user` / `rider` / `admin`), and a strict parcel status flow (`unpaid` → `paid` → `ready-to-pickup` → `in-transit` → `ready-for-delivery` / warehouse path → `delivered`). It also includes Stripe Checkout with server-side session verification before marking a parcel paid, OTP hashing for delivery proof, and tracking event logs for every status change.
 
 
----
-
-## Why This Project Was Created
-
-### Problem Statement
-
-Local courier booking is often offline, pricing is unclear, and tracking is hard to follow. Customers lack a simple digital flow from book → pay → track → review. Operators need role-based tools for rider approval, assignment, and delivery confirmation.
-
-### Solution
-
-Zap Shift connects:
-- **Users** who want reliable door-to-door shipping
-- **Riders** who collect, transit, and deliver parcels
-- **Admins** who keep logistics safe and organized
-
-The goal is a clean, secure courier experience from **send → pay → assign → deliver (OTP) → review**.
 
 ---
 
