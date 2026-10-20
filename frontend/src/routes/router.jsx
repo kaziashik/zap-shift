@@ -8,7 +8,7 @@ import Login from "../pages/Auth/Login/Login";
 import Register from "../pages/Auth/Register/Register";
 import PrivateRoute from "./PrivateRoute";
 import Rider from "../pages/Rider/Rider";
-import SendParcel from "../pages/sendParcel/SendParcel";
+import SendParcel from "../pages/SendParcel/SendParcel";
 import DashboardLayout from "../layouts/DashboardLayout";
 import MyParcels from "../pages/Dashboard/MyParcels/MyParcels";
 import Payment from "../pages/Dashboard/Payment/Payment";
@@ -34,7 +34,7 @@ import BlogDetails from "../pages/Blog/BlogDetails";
 import Help from "../pages/Help/Help";
 import Privacy from "../pages/Legal/Privacy";
 import Terms from "../pages/Legal/Terms";
-import EditParcel from "../pages/sendParcel/EditParcel";
+import EditParcel from "../pages/SendParcel/EditParcel";
 import AdminAnalytics from "../pages/Dashboard/Analytics/AdminAnalytics";
 import NotFound from "../pages/NotFound/NotFound";
 import RouteError from "../pages/RouteError/RouteError";
@@ -42,87 +42,127 @@ import RouteError from "../pages/RouteError/RouteError";
 export const router = createBrowserRouter([
   {
     path: "/",
-    Component: RootLayout,
+    element: <RootLayout />,
     errorElement: <RouteError />,
     children: [
-      { index: true, Component: Home },
-      { path: 'explore', Component: Explore },
-      { path: 'services/:id', Component: ServiceDetails },
-      { path: 'about', Component: About },
-      { path: 'contact', Component: Contact },
-      { path: 'blog', Component: Blog },
-      { path: 'blog/:id', Component: BlogDetails },
-      { path: 'help', Component: Help },
-      { path: 'privacy', Component: Privacy },
-      { path: 'terms', Component: Terms },
+      { index: true, element: <Home /> },
+      { path: "explore", element: <Explore /> },
+      { path: "services/:id", element: <ServiceDetails /> },
+      { path: "about", element: <About /> },
+      { path: "contact", element: <Contact /> },
+      { path: "blog", element: <Blog /> },
+      { path: "blog/:id", element: <BlogDetails /> },
+      { path: "help", element: <Help /> },
+      { path: "privacy", element: <Privacy /> },
+      { path: "terms", element: <Terms /> },
       {
-        path: 'rider',
-        element: <PrivateRoute><Rider /></PrivateRoute>
+        path: "rider",
+        element: (
+          <PrivateRoute>
+            <Rider />
+          </PrivateRoute>
+        ),
       },
       {
-        path: 'send-parcel',
-        element: <PrivateRoute><SendParcel /></PrivateRoute>
+        path: "send-parcel",
+        element: (
+          <PrivateRoute>
+            <SendParcel />
+          </PrivateRoute>
+        ),
       },
       {
-        path: 'edit-parcel/:parcelId',
-        element: <PrivateRoute><EditParcel /></PrivateRoute>
+        path: "edit-parcel/:parcelId",
+        element: (
+          <PrivateRoute>
+            <EditParcel />
+          </PrivateRoute>
+        ),
       },
-      { path: 'coverage', Component: Coverage },
-      { path: 'coverage/:slug', Component: CoverageDetails },
-      { path: 'parcel-track/:trackingId', Component: ParcelTrack },
-      { path: '*', Component: NotFound }
-    ]
+      { path: "coverage", element: <Coverage /> },
+      { path: "coverage/:slug", element: <CoverageDetails /> },
+      { path: "parcel-track/:trackingId", element: <ParcelTrack /> },
+      { path: "*", element: <NotFound /> },
+    ],
   },
   {
-    path: '/',
-    Component: AuthLayout,
+    path: "/",
+    element: <AuthLayout />,
     errorElement: <RouteError />,
     children: [
-      { path: 'login', Component: Login },
-      { path: 'register', Component: Register }
-    ]
+      { path: "login", element: <Login /> },
+      { path: "register", element: <Register /> },
+    ],
   },
   {
-    path: 'dashboard',
-    element: <PrivateRoute><DashboardLayout /></PrivateRoute>,
+    path: "dashboard",
+    element: (
+      <PrivateRoute>
+        <DashboardLayout />
+      </PrivateRoute>
+    ),
     errorElement: <RouteError />,
     children: [
-      { index: true, Component: DashboardHome },
-      { path: 'my-parcels', Component: MyParcels },
-      { path: 'payment/:parcelId', Component: Payment },
-      { path: 'payment-history', Component: PaymentHistory },
-      { path: 'payment-success', Component: PaymentSuccess },
-      { path: 'payment-cancelled', Component: PaymentCancelled },
-      { path: 'settings', Component: Settings },
+      { index: true, element: <DashboardHome /> },
+      { path: "my-parcels", element: <MyParcels /> },
+      { path: "payment/:parcelId", element: <Payment /> },
+      { path: "payment-history", element: <PaymentHistory /> },
+      { path: "payment-success", element: <PaymentSuccess /> },
+      { path: "payment-cancelled", element: <PaymentCancelled /> },
+      { path: "settings", element: <Settings /> },
       {
-        path: 'assigned-deliveries',
-        element: <RiderRoute><AssignedDeliveries /></RiderRoute>
+        path: "assigned-deliveries",
+        element: (
+          <RiderRoute>
+            <AssignedDeliveries />
+          </RiderRoute>
+        ),
       },
       {
-        path: 'completed-deliveries',
-        element: <RiderRoute><CompletedDeliveries /></RiderRoute>
+        path: "completed-deliveries",
+        element: (
+          <RiderRoute>
+            <CompletedDeliveries />
+          </RiderRoute>
+        ),
       },
       {
-        path: 'analytics',
-        element: <AdminRoute><AdminAnalytics /></AdminRoute>
+        path: "analytics",
+        element: (
+          <AdminRoute>
+            <AdminAnalytics />
+          </AdminRoute>
+        ),
       },
       {
-        path: 'approve-riders',
-        element: <AdminRoute><ApproveRiders /></AdminRoute>
+        path: "approve-riders",
+        element: (
+          <AdminRoute>
+            <ApproveRiders />
+          </AdminRoute>
+        ),
       },
       {
-        path: 'assign-riders',
-        element: <AdminRoute><AssignRiders /></AdminRoute>
+        path: "assign-riders",
+        element: (
+          <AdminRoute>
+            <AssignRiders />
+          </AdminRoute>
+        ),
       },
       {
-        path: 'users-management',
-        element: <AdminRoute><UsersManagement /></AdminRoute>
+        path: "users-management",
+        element: (
+          <AdminRoute>
+            <UsersManagement />
+          </AdminRoute>
+        ),
       },
-      { path: '*', Component: NotFound }
-    ]
+      { path: "*", element: <NotFound /> },
+    ],
   },
   {
-    path: '*',
-    Component: NotFound
-  }
+    path: "*",
+    element: <NotFound />,
+  },
 ]);

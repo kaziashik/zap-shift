@@ -310,7 +310,17 @@ Pricing is calculated on the client and **re-validated on the server** when a pa
 | Same city | **80%** of parcel cost |
 | Outside city | **60%** of parcel cost |
 
----
+### High-level Architecture
+```text
+Browser (React + Vite Frontend)
+        |  Firebase ID token + Axios
+        v
+Express API (backend)
+        |
+        +--> MongoDB Atlas (users, parcels, riders, payments, trackings, reviews)
+        +--> Firebase Admin (token verify)
+        +--> Stripe (checkout + payment verify)
+```
 
 ## Tech Stack
 
