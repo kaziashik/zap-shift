@@ -1,6 +1,6 @@
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const { ObjectId } = require('mongodb');
-const { logTracking } = require('../middleware/logging');
+const stripe = require('../../lib/stripe');
+const { logTracking } = require('../../utils/logTracking');
+const config = require('../../config');
 
 class PaymentController {
     constructor(models, collections) {
@@ -33,8 +33,8 @@ class PaymentController {
                     parcelName: parcelInfo.parcelName || ''
                 },
                 customer_email: parcelInfo.senderEmail,
-                success_url: `${process.env.SITE_DOMAIN}/dashboard/payment-success?session_id={CHECKOUT_SESSION_ID}`,
-                cancel_url: `${process.env.SITE_DOMAIN}/dashboard/payment-cancelled`,
+                success_url: `${config.siteDomain}/dashboard/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+                cancel_url: `${config.siteDomain}/dashboard/payment-cancelled`,
             });
 
             res.send({ url: session.url });

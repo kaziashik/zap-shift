@@ -1,7 +1,7 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "ZapShift API — Express + MongoDB (module-based structure)",
   "main": "index.js",
   "scripts": {
     "test": "node test-all.js",

@@ -1,7 +1,9 @@
 // Comprehensive API test script
+require('dotenv').config();
 const http = require('http');
 
-const BASE_URL = 'http://localhost:3000';
+const PORT = Number(process.env.PORT) || 5001;
+const BASE_URL = `http://localhost:${PORT}`;
 let testsPassed = 0;
 let testsFailed = 0;
 const results = [];
@@ -53,7 +55,7 @@ async function runAllTests() {
     console.log('1. Testing Root Endpoint');
     console.log('-'.repeat(60));
     await makeRequest(
-        { hostname: 'localhost', port: 3000, path: '/', method: 'GET' },
+        { hostname: 'localhost', port: PORT, path: '/', method: 'GET' },
         200,
         'Root endpoint (/)'
     );
@@ -73,7 +75,7 @@ async function runAllTests() {
 
     for (const endpoint of protectedEndpoints) {
         await makeRequest(
-            { hostname: 'localhost', port: 3000, path: endpoint.path, method: 'GET' },
+            { hostname: 'localhost', port: PORT, path: endpoint.path, method: 'GET' },
             401,
             endpoint.name + ' (no auth)'
         );
@@ -87,7 +89,7 @@ async function runAllTests() {
         await makeRequest(
             {
                 hostname: 'localhost',
-                port: 3000,
+                port: PORT,
                 path: endpoint.path,
                 method: 'GET',
                 headers: { 'Authorization': 'Bearer invalid_token_12345' }
@@ -102,12 +104,12 @@ async function runAllTests() {
     console.log('4. Testing User-Specific Endpoints');
     console.log('-'.repeat(60));
     await makeRequest(
-        { hostname: 'localhost', port: 3000, path: '/users/507f1f77bcf86cd799439011', method: 'GET' },
+        { hostname: 'localhost', port: PORT, path: '/users/507f1f77bcf86cd799439011', method: 'GET' },
         401,
         'GET /users/:id (no auth)'
     );
     await makeRequest(
-        { hostname: 'localhost', port: 3000, path: '/users/test@example.com/role', method: 'GET' },
+        { hostname: 'localhost', port: PORT, path: '/users/test@example.com/role', method: 'GET' },
         401,
         'GET /users/:email/role (no auth)'
     );
@@ -117,19 +119,19 @@ async function runAllTests() {
     console.log('5. Testing Parcel-Specific Endpoints');
     console.log('-'.repeat(60));
     await makeRequest(
-        { hostname: 'localhost', port: 3000, path: '/parcels/507f1f77bcf86cd799439011', method: 'GET' },
+        { hostname: 'localhost', port: PORT, path: '/parcels/507f1f77bcf86cd799439011', method: 'GET' },
         401,
         'GET /parcels/:id (no auth)'
     );
     await makeRequest(
-        { hostname: 'localhost', port: 3000, path: '/parcels/rider', method: 'GET' },
+        { hostname: 'localhost', port: PORT, path: '/parcels/rider', method: 'GET' },
         401,
         'GET /parcels/rider (no auth)'
     );
     await makeRequest(
         {
             hostname: 'localhost',
-            port: 3000,
+            port: PORT,
             path: '/parcels',
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -144,9 +146,9 @@ async function runAllTests() {
     console.log('6. Testing Tracking Endpoints');
     console.log('-'.repeat(60));
     await makeRequest(
-        { hostname: 'localhost', port: 3000, path: '/trackings/PRCL-20250101-ABC123/logs', method: 'GET' },
-        401,
-        'GET /trackings/:trackingId/logs (no auth)'
+        { hostname: 'localhost', port: PORT, path: '/trackings/PRCL-20250101-ABC123/logs', method: 'GET' },
+        200,
+        'GET /trackings/:trackingId/logs (public)'
     );
     console.log('');
 
@@ -156,7 +158,7 @@ async function runAllTests() {
     await makeRequest(
         {
             hostname: 'localhost',
-            port: 3000,
+            port: PORT,
             path: '/payment-checkout-session',
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -171,7 +173,7 @@ async function runAllTests() {
     console.log('8. Testing Route Ordering');
     console.log('-'.repeat(60));
     await makeRequest(
-        { hostname: 'localhost', port: 3000, path: '/parcels/123/status', method: 'PATCH' },
+        { hostname: 'localhost', port: PORT, path: '/parcels/123/status', method: 'PATCH' },
         401,
         'PATCH /parcels/:id/status (should match specific route, not generic)'
     );

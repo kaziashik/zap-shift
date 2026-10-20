@@ -1,17 +1,13 @@
 const { MongoClient, ServerApiVersion } = require('mongodb');
+const config = require('../config');
 
-// console.log("DB_USER: ",process.env.DB_USER);
-// console.log("DB_PASS: ",process.env.DB_PASS);
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.mx107ng.mongodb.net/?appName=Cluster0`;
-
-
-
+const uri = `mongodb+srv://${config.dbUser}:${config.dbPass}@cluster0.mx107ng.mongodb.net/?appName=Cluster0`;
 
 const client = new MongoClient(uri, {
     serverApi: {
         version: ServerApiVersion.v1,
         strict: true,
-        deprecationErrors: true,
+        deprecationErrors: true
     }
 });
 
@@ -38,4 +34,3 @@ async function connectDatabase() {
 }
 
 module.exports = { connectDatabase, client };
-
