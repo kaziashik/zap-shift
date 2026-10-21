@@ -5,29 +5,37 @@ import Loading from '../../../components/Loading/Loading';
 
 const PaymentSuccess = () => {
     const [searchParams] = useSearchParams();
-    const [paymentInfo, setPaymentInfo] = useState({});
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
     const sessionId = searchParams.get('session_id');
     const axiosSecure = useAxiosSecure();
 
+    const [paymentInfo, setPaymentInfo] = useState({});
+    const [error, setError] = useState(() => (sessionId ? '' : 'Missing checkout session.'));
+    const [loading, setLoading] = useState(() => Boolean(sessionId));
+
     useEffect(() => {
-        if (!sessionId) {
-            setError('Missing checkout session.');
-            setLoading(false);
-            return;
-        }
-        axiosSecure.patch(`/payment-success?session_id=${sessionId}`)
+        if (!sessionId) return undefined;
+
+        let cancelled = false;
+        axiosSecure
+            .patch(`/payment-success?session_id=${sessionId}`)
             .then((res) => {
+                if (cancelled) return;
                 setPaymentInfo({
                     transactionId: res.data.transactionId,
                     trackingId: res.data.trackingId
                 });
             })
             .catch((err) => {
+                if (cancelled) return;
                 setError(err?.response?.data?.message || err.message || 'Could not confirm payment');
             })
-            .finally(() => setLoading(false));
+            .finally(() => {
+                if (!cancelled) setLoading(false);
+            });
+
+        return () => {
+            cancelled = true;
+        };
     }, [sessionId, axiosSecure]);
 
     if (loading) return <Loading />;

@@ -426,17 +426,20 @@ backend/
 frontend/
 ├── public/
 ├── src/
-│   ├── components/       # Logo, cards, dashboard UI, theme toggle
+│   ├── components/       # Shared UI (only truly reusable pieces)
 │   ├── contexts/         # Auth + Theme providers
 │   ├── data/             # serviceCenters, services, reviews
-│   ├── firebase/         # Firebase client init
+│   ├── firebase/         # Firebase client init (single place)
 │   ├── hooks/            # useAuth, useAxios, useAxiosSecure, useRole
 │   ├── layouts/          # Root, Auth, Dashboard layouts
-│   ├── pages/            # Home, Auth, Coverage, SendParcel, Dashboard, …
-│   └── routes/           # router, PrivateRoute, AdminRoute, RiderRoute
+│   ├── pages/            # Route screens (grouped by area)
+│   └── routes/           # router (lazy-loaded pages), Private/Admin/Rider guards
+├── .env.example
 ├── package.json
 └── vite.config.js
 ```
+
+> **Maintainability note:** Pages are lazy-loaded in `routes/router.jsx` for smaller initial bundles. Feature folders (`src/features/...`) can be introduced gradually later—move one feature at a time, then lint/build—rather than relocating everything at once.
 
 ---
 

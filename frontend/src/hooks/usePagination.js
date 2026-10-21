@@ -12,7 +12,7 @@ const usePagination = (items = [], pageSize = 9) => {
     }, [items, currentPage, pageSize]);
 
     const goTo = useCallback((next) => {
-        setPage((prev) => {
+        setPage(() => {
             const safeTotal = Math.max(1, Math.ceil(items.length / pageSize));
             return Math.min(Math.max(1, next), safeTotal);
         });

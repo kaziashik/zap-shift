@@ -15,7 +15,7 @@ const markerIcon = new L.Icon({
 });
 
 const CoverageDetails = () => {
-    const centers = serviceCentersData || [];
+    const centers = useMemo(() => serviceCentersData || [], []);
     const { slug } = useParams();
 
     const center = useMemo(() => {

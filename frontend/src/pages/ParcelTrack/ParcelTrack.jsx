@@ -59,7 +59,7 @@ const ParcelTrack = () => {
         }
     });
 
-    const trackings = data?.logs || [];
+    const trackings = useMemo(() => data?.logs || [], [data?.logs]);
     const resolvedId = data?.trackingId || trackingId;
     const latest = useMemo(() => (trackings.length ? trackings[trackings.length - 1] : null), [trackings]);
 

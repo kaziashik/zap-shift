@@ -8,7 +8,7 @@ import serviceCentersData from '../../data/serviceCenters.json';
 import usePagination from '../../hooks/usePagination';
 
 const Explore = () => {
-    const centers = serviceCentersData || [];
+    const centers = useMemo(() => serviceCentersData || [], []);
     const [tab, setTab] = useState('services');
     const [search, setSearch] = useState('');
     const [category, setCategory] = useState('all');
@@ -69,9 +69,12 @@ const Explore = () => {
 
     useEffect(() => {
         reset();
-        setLoading(true);
-        const t = setTimeout(() => setLoading(false), 400);
-        return () => clearTimeout(t);
+        const show = setTimeout(() => setLoading(true), 0);
+        const hide = setTimeout(() => setLoading(false), 400);
+        return () => {
+            clearTimeout(show);
+            clearTimeout(hide);
+        };
     }, [tab, search, category, priceBand, region, statusFilter, sort, reset]);
 
     return (
