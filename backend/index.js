@@ -1,5 +1,5 @@
 /**
- * Entry point (local + Vercel).
- * App source lives under src/ (PH-Healthcare-style layout).
+ * Vercel entry + npm start shim.
+ * Real startup logic lives in src/server.js (import does not auto-listen).
  */
-require('./src/server');
+module.exports = require('./src/server');

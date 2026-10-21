@@ -374,29 +374,50 @@ zap-shift/
 └── README.md
 ```
 
-### Backend (`backend/`) — PH-Healthcare-style modules
+### Backend (`backend/`) — preferred modular structure
 ```text
 backend/
-├── index.js                      # Entry (local + Vercel)
+├── index.js                      # Vercel shim only → re-exports src/server handler
 ├── src/
-│   ├── server.js                 # DB connect + listen
-│   ├── app.js                    # Express app + route mounts
-│   └── app/
-│       ├── config/               # Env config
-│       ├── lib/                  # database, firebase, stripe, bootstrap
-│       ├── middleware/           # checkAuth, validateRequest, errors
-│       ├── utils/                # pricing, trackingId, deliveryStatus, …
-│       ├── interfaces/
-│       └── module/
-│           ├── user/             # user.route / .controller / .model
-│           ├── parcel/
-│           ├── payment/
-│           ├── rider/
-│           ├── tracking/
-│           ├── contact/
-│           └── review/
-├── package.json
-├── vercel.json
+│   ├── server.js                 # SINGLE runtime entry
+│   │                             # - import → does NOT listen
+│   │                             # - node src/server.js → listens
+│   ├── app.js                    # createApp() only (Express/CORS/routes/errors; no DB)
+│   ├── app/
+│   │   ├── config/
+│   │   ├── lib/
+│   │   │   ├── database.js       # DB connect stays here
+│   │   │   ├── firebase.js
+│   │   │   ├── stripe.js
+│   │   │   └── bootstrap.js
+│   │   ├── middleware/
+│   │   │   ├── requireAuth.js
+│   │   │   ├── requireAdmin.js
+│   │   │   ├── requireRider.js
+│   │   │   ├── attachCollections.js
+│   │   │   ├── globalErrorHandler.js
+│   │   │   └── notFound.js
+│   │   ├── utils/
+│   │   └── interfaces/
+│   └── modules/                  # plural “modules”
+│       ├── user/
+│       │   ├── user.route.js     # thin: requireAuth + controller.bind(...)
+│       │   ├── user.controller.js
+│       │   └── user.model.js
+│       ├── parcel/
+│       ├── payment/
+│       ├── rider/
+│       ├── tracking/
+│       ├── contact/
+│       │   ├── contact.route.js
+│       │   ├── contact.controller.js
+│       │   ├── contact.model.js
+│       │   └── contact.validator.js   # feature-level validation
+│       └── review/
+├── tests/
+│   └── smoke.test.js
+├── package.json                  # "dev"/"start" → node src/server.js
+├── vercel.json                   # still points at index.js (same prod URL)
 └── SETUP.md
 ```
 

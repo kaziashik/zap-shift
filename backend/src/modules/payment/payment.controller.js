@@ -1,6 +1,6 @@
-const stripe = require('../../lib/stripe');
-const { logTracking } = require('../../utils/logTracking');
-const config = require('../../config');
+const stripe = require('../../app/lib/stripe');
+const { logTracking } = require('../../app/utils/logTracking');
+const config = require('../../app/config');
 
 class PaymentController {
     constructor(models, collections) {

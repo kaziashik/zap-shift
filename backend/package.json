@@ -1,12 +1,12 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "ZapShift API — Express + MongoDB (module-based structure)",
+  "description": "ZapShift API — Express + MongoDB (modules architecture)",
   "main": "index.js",
   "scripts": {
-    "test": "node test-all.js",
-    "start": "node index.js",
-    "dev": "node index.js"
+    "dev": "node src/server.js",
+    "start": "node src/server.js",
+    "test": "node tests/smoke.test.js"
   },
   "keywords": [],
   "author": "",

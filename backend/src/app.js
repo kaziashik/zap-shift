@@ -6,17 +6,17 @@ const { globalErrorHandler } = require('./app/middleware/globalErrorHandler');
 const { notFound } = require('./app/middleware/notFound');
 const { bootstrap } = require('./app/lib/bootstrap');
 
-const { createUserRoutes } = require('./app/module/user/user.route');
-const { createParcelRoutes } = require('./app/module/parcel/parcel.route');
-const { createPaymentRoutes } = require('./app/module/payment/payment.route');
-const { createRiderRoutes } = require('./app/module/rider/rider.route');
-const { createTrackingRoutes } = require('./app/module/tracking/tracking.route');
-const { createContactRoutes } = require('./app/module/contact/contact.route');
-const { createReviewRoutes } = require('./app/module/review/review.route');
+const { createUserRoutes } = require('./modules/user/user.route');
+const { createParcelRoutes } = require('./modules/parcel/parcel.route');
+const { createPaymentRoutes } = require('./modules/payment/payment.route');
+const { createRiderRoutes } = require('./modules/rider/rider.route');
+const { createTrackingRoutes } = require('./modules/tracking/tracking.route');
+const { createContactRoutes } = require('./modules/contact/contact.route');
+const { createReviewRoutes } = require('./modules/review/review.route');
 
 /**
- * Build Express app with the same public API paths as before.
- * Folder/route style mirrors PH-Healthcare-Backend (module/*.route.js).
+ * Build Express app only (no DB connect / no listen).
+ * Pass already-connected Mongo collections.
  */
 function createApp(collections) {
     const app = express();
@@ -46,7 +46,7 @@ function createApp(collections) {
         });
     });
 
-    // Module routers (same URL paths — no frontend change)
+    // Same public API paths (no frontend change)
     app.use('/users', createUserRoutes(controllers.user));
     app.use('/parcels', createParcelRoutes(controllers.parcel));
     app.use('/riders', createRiderRoutes(controllers.rider));

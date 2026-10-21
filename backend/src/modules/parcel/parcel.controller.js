@@ -1,6 +1,6 @@
-const { generateTrackingId } = require('../../utils/trackingId');
-const { logTracking } = require('../../utils/logTracking');
-const { calculateParcelCost, isSameCityParcel, calculateRiderPayout } = require('../../utils/pricing');
+const { generateTrackingId } = require('../../app/utils/trackingId');
+const { logTracking } = require('../../app/utils/logTracking');
+const { calculateParcelCost, isSameCityParcel, calculateRiderPayout } = require('../../app/utils/pricing');
 const {
     STATUS,
     normalizeStatus,
@@ -10,7 +10,7 @@ const {
     canTransition,
     ACTIVE_STATUSES,
     COMPLETED_STATUSES
-} = require('../../utils/deliveryStatus');
+} = require('../../app/utils/deliveryStatus');
 
 class ParcelController {
     constructor(models, collections) {

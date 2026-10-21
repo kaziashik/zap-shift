@@ -1,18 +1,18 @@
-const UserModel = require('../module/user/user.model');
-const ParcelModel = require('../module/parcel/parcel.model');
-const RiderModel = require('../module/rider/rider.model');
-const PaymentModel = require('../module/payment/payment.model');
-const TrackingModel = require('../module/tracking/tracking.model');
-const ContactModel = require('../module/contact/contact.model');
-const ReviewModel = require('../module/review/review.model');
+const UserModel = require('../../modules/user/user.model');
+const ParcelModel = require('../../modules/parcel/parcel.model');
+const RiderModel = require('../../modules/rider/rider.model');
+const PaymentModel = require('../../modules/payment/payment.model');
+const TrackingModel = require('../../modules/tracking/tracking.model');
+const ContactModel = require('../../modules/contact/contact.model');
+const ReviewModel = require('../../modules/review/review.model');
 
-const UserController = require('../module/user/user.controller');
-const ParcelController = require('../module/parcel/parcel.controller');
-const RiderController = require('../module/rider/rider.controller');
-const PaymentController = require('../module/payment/payment.controller');
-const TrackingController = require('../module/tracking/tracking.controller');
-const ContactController = require('../module/contact/contact.controller');
-const ReviewController = require('../module/review/review.controller');
+const UserController = require('../../modules/user/user.controller');
+const ParcelController = require('../../modules/parcel/parcel.controller');
+const RiderController = require('../../modules/rider/rider.controller');
+const PaymentController = require('../../modules/payment/payment.controller');
+const TrackingController = require('../../modules/tracking/tracking.controller');
+const ContactController = require('../../modules/contact/contact.controller');
+const ReviewController = require('../../modules/review/review.controller');
 
 function initializeModels(collections) {
     return {
