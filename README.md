@@ -487,17 +487,12 @@ cd ../frontend
 npm install
 ```
 
-Create `frontend/.env`:
-```env
-VITE_apiKey=your_firebase_api_key
-VITE_authDomain=your_project.firebaseapp.com
-VITE_projectId=your_project_id
-VITE_storageBucket=your_project.appspot.com
-VITE_messagingSenderId=your_sender_id
-VITE_appId=your_app_id
-VITE_API_URL=http://localhost:5001
-VITE_image_host_key=optional_imgbb_key
+Copy the example env and fill in your values:
+```bash
+cp .env.example .env
 ```
+
+See [`frontend/.env.example`](./frontend/.env.example) for required variables (no secrets committed).
 
 Then:
 ```bash

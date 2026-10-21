@@ -1,3 +1,6 @@
+
+
+
 const express = require('express');
 const cors = require('cors');
 const config = require('./app/config');
@@ -14,10 +17,7 @@ const { createTrackingRoutes } = require('./modules/tracking/tracking.route');
 const { createContactRoutes } = require('./modules/contact/contact.route');
 const { createReviewRoutes } = require('./modules/review/review.route');
 
-/**
- * Build Express app only (no DB connect / no listen).
- * Pass already-connected Mongo collections.
- */
+
 function createApp(collections) {
     const app = express();
     const { controllers } = bootstrap(collections);
@@ -46,7 +46,7 @@ function createApp(collections) {
         });
     });
 
-    // Same public API paths (no frontend change)
+  
     app.use('/users', createUserRoutes(controllers.user));
     app.use('/parcels', createParcelRoutes(controllers.parcel));
     app.use('/riders', createRiderRoutes(controllers.rider));
